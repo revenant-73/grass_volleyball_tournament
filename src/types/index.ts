@@ -35,6 +35,7 @@ export interface Division {
   bracket_published: boolean
   tiebreak_rules_json: Record<string, unknown> | null
   created_at: string
+  teams?: { count: number }[]
 }
 
 export interface Team {
