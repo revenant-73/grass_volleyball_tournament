@@ -2,11 +2,29 @@
 
 import { useSearchParams } from 'next/navigation'
 import { login } from './actions'
-import { Suspense } from 'react'
+import { Suspense, useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="w-full py-3 bg-black text-white dark:bg-white dark:text-black font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {pending ? 'Signing In...' : 'Sign In'}
+    </button>
+  )
+}
 
 function LoginForm() {
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
+  const urlError = searchParams.get('error')
+  const [state, formAction] = useActionState(login, null)
+  
+  const displayError = state?.error || urlError
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-black p-4">
@@ -16,13 +34,13 @@ function LoginForm() {
           <p className="text-zinc-500 dark:text-zinc-400 mt-2">Enter your credentials to access the tournament dashboard.</p>
         </div>
 
-        {error && (
+        {displayError && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg border border-red-100 dark:border-red-900/30">
-            {error}
+            {displayError}
           </div>
         )}
 
-        <form action={login} className="space-y-6">
+        <form action={formAction} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2" htmlFor="email">
               Email Address
@@ -51,12 +69,7 @@ function LoginForm() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-black text-white dark:bg-white dark:text-black font-bold rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Sign In
-          </button>
+          <SubmitButton />
         </form>
 
         <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-900 text-center">

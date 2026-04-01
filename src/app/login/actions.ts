@@ -4,7 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export async function login(formData: FormData) {
+export async function login(prevState: any, formData: FormData) {
+  console.log('Login attempt started for:', formData.get('email'))
   const supabase = await createClient()
 
   const data = {
@@ -15,7 +16,7 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/login?error=' + encodeURIComponent(error.message))
+    return { error: error.message }
   }
 
   revalidatePath('/', 'layout')
