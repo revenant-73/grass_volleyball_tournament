@@ -118,4 +118,5 @@ export interface Match {
   updated_at: string
   team_1?: Team
   team_2?: Team
+  pool?: Pool
 }
