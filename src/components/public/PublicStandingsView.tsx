@@ -74,21 +74,21 @@ export default function PublicStandingsView({
                       </thead>
                       <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                         {standings.map((stat, idx) => (
-                          <tr key={stat.team_id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                          <tr key={stat.team.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                             <td className="py-4">
                               <div className="flex items-center gap-3">
                                 <span className="text-zinc-300 w-4 font-black text-[10px]">{idx + 1}</span>
-                                <span className="font-bold text-black dark:text-white uppercase tracking-tight">{stat.team_name}</span>
+                                <span className="font-bold text-black dark:text-white uppercase tracking-tight">{stat.team.team_name}</span>
                               </div>
                             </td>
                             <td className="text-center py-4 font-black text-black dark:text-white">
                               {stat.wins}-{stat.losses}
                             </td>
-                            <td className={`text-center py-4 font-black ${stat.point_diff > 0 ? 'text-emerald-600' : stat.point_diff < 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
-                              {stat.point_diff > 0 ? `+${stat.point_diff}` : stat.point_diff}
+                            <td className={`text-center py-4 font-black ${stat.pointDiff > 0 ? 'text-emerald-600' : stat.pointDiff < 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
+                              {stat.pointDiff > 0 ? `+${stat.pointDiff}` : stat.pointDiff}
                             </td>
                             <td className="text-center py-4 text-zinc-500 font-bold">
-                              {stat.points_for}
+                              {stat.pointsFor}
                             </td>
                           </tr>
                         ))}
