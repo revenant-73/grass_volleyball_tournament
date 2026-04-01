@@ -5,20 +5,27 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 export async function login(prevState: any, formData: FormData) {
-  console.log('Login attempt started for:', formData.get('email'))
+  const email = formData.get('email') as string
+  console.log('--- LOGIN ATTEMPT ---')
+  console.log('Email:', email)
+  
   const supabase = await createClient()
 
   const data = {
-    email: formData.get('email') as string,
+    email,
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { error, data: authData } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
+    console.error('Auth Error:', error.message)
     return { error: error.message }
   }
 
+  console.log('Auth Success for:', authData.user?.email)
+  console.log('Redirecting to /admin...')
+  
   revalidatePath('/', 'layout')
   redirect('/admin')
 }
