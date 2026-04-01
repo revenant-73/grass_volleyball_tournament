@@ -53,3 +53,23 @@ export interface Team {
   updated_at: string
   division?: Division
 }
+
+export interface Announcement {
+  id: string
+  event_id: string
+  title: string
+  content: string
+  is_urgent: boolean
+  published_at: string
+  created_at: string
+}
+
+export interface Sponsor {
+  id: string
+  event_id: string
+  name: string
+  logo_url: string | null
+  website_url: string | null
+  display_order: number
+  created_at: string
+}

@@ -16,7 +16,9 @@ export default async function PublicEventDetailPage({
     .from('events')
     .select(`
       *,
-      divisions (*)
+      divisions (*),
+      announcements (*),
+      sponsors (*)
     `)
     .eq('slug', slug)
     .single()
@@ -25,12 +27,31 @@ export default async function PublicEventDetailPage({
     notFound()
   }
 
+  const urgentAnnouncement = event.announcements?.find((a: any) => a.is_urgent)
+  const regularAnnouncements = event.announcements?.filter((a: any) => !a.is_urgent) || []
+
   const isRegistrationOpen = event.status === 'open'
   const upcomingDate = new Date(event.date_start) >= new Date(new Date().setHours(0,0,0,0))
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12">
       <div className="max-w-6xl mx-auto">
+        {urgentAnnouncement && (
+          <div className="mb-8 p-6 bg-red-600 text-white rounded-[2rem] shadow-xl animate-in fade-in slide-in-from-top-4 duration-700">
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-black uppercase tracking-tight mb-1">{urgentAnnouncement.title}</h3>
+                <p className="font-bold opacity-90">{urgentAnnouncement.content}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <header className="mb-12">
           <Link href="/events" className="inline-flex items-center text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-white transition-colors mb-8 group">
             <svg className="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,6 +117,25 @@ export default async function PublicEventDetailPage({
               </div>
             </section>
 
+            {regularAnnouncements.length > 0 && (
+              <section>
+                <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Latest Updates</h2>
+                <div className="space-y-4">
+                  {regularAnnouncements.map((announcement: any) => (
+                    <div key={announcement.id} className="p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-black text-black dark:text-white uppercase tracking-tight">{announcement.title}</h3>
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                          {new Date(announcement.published_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-zinc-600 dark:text-zinc-400 font-bold leading-relaxed">{announcement.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section>
               <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Tournament Divisions</h2>
               <div className="grid grid-cols-1 gap-6">
@@ -123,6 +163,45 @@ export default async function PublicEventDetailPage({
                  )}
               </div>
             </section>
+
+            {event.sponsors && event.sponsors.length > 0 && (
+              <section>
+                <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Event Sponsors</h2>
+                <div className="flex flex-wrap items-center gap-12">
+                  {event.sponsors
+                    .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
+                    .map((sponsor: any) => (
+                    <div key={sponsor.id} className="group transition-all duration-500">
+                      {sponsor.website_url ? (
+                        <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="block text-center space-y-3">
+                          <div className="relative w-32 h-20 grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">
+                            {sponsor.logo_url ? (
+                              <Image src={sponsor.logo_url} alt={sponsor.name} fill className="object-contain" unoptimized />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center font-black text-zinc-300 dark:text-zinc-700 text-xs uppercase tracking-tighter">
+                                {sponsor.name}
+                              </div>
+                            )}
+                          </div>
+                        </a>
+                      ) : (
+                        <div className="text-center space-y-3">
+                          <div className="relative w-32 h-20 grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">
+                            {sponsor.logo_url ? (
+                              <Image src={sponsor.logo_url} alt={sponsor.name} fill className="object-contain" unoptimized />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center font-black text-zinc-300 dark:text-zinc-700 text-xs uppercase tracking-tighter">
+                                {sponsor.name}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Sidebar */}

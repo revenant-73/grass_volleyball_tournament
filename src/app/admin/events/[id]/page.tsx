@@ -145,6 +145,18 @@ export default async function EventDetailPage({
                  >
                     Manage Teams
                  </Link>
+                 <Link 
+                   href={`/admin/events/${id}/announcements`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Post Announcement
+                 </Link>
+                 <Link 
+                   href={`/admin/events/${id}/sponsors`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Manage Sponsors
+                 </Link>
                  <button disabled className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-400 font-bold rounded-xl text-left text-sm uppercase tracking-tighter opacity-50 cursor-not-allowed">
                     Pool Assignments
                  </button>
