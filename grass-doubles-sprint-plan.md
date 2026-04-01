@@ -6,61 +6,61 @@ Target: **usable MVP by end of Sprint 5**, buffer/polish in Sprint 6.
 
 ---
 
-## Sprint 0 — Setup and decisions
+## Sprint 0 — Setup and decisions [COMPLETED]
 **Goal:** remove ambiguity before real build starts.
 
 ### Tickets
-- T-001 Project repository setup
-- T-002 Deployment setup
-- T-003 Supabase project setup
+- [x] T-001 Project repository setup
+- [x] T-002 Deployment setup
+- [x] T-003 Supabase project setup
 
 ### Added planning tasks
-- Lock MVP scope
-- Confirm supported formats:
+- [x] Lock MVP scope
+- [x] Confirm supported formats:
   - 4-team pool
   - 2 pools of 4
   - 4-team and 8-team single elim
-- Define status enums
-- Use Supabase Realtime for instant public standings/bracket updates
+- [x] Define status enums
+- [x] Use Supabase Realtime for instant public standings/bracket updates
 
 ### Deliverable
-- Running app
-- Connected database
-- Clean repo structure
-- No more product ambiguity
+- [x] Running app
+- [x] Connected database
+- [x] Clean repo structure
+- [x] No more product ambiguity
 
 ### Risk
 - Starting UI before data model is settled
 
 ---
 
-## Sprint 1 — Data model + admin shell
+## Sprint 1 — Data model + admin shell [COMPLETED]
 **Goal:** create the foundation that everything else depends on.
 
 ### Tickets
-- T-010 Create database schema
-- T-011 Seed sample data
-- T-012 Admin authentication
-- T-013 Role-based access control
-- T-050 Admin dashboard shell
+- [x] T-010 Create database schema
+- [x] T-011 Seed sample data
+- [x] T-012 Admin authentication
+- [x] T-013 Role-based access control
+- [x] T-050 Admin dashboard shell
 
 ### Stretch
-- T-051 Event create/edit form
+- [ ] T-051 Event create/edit form
 
 ### Deliverable
-- Admin can log in
-- Admin can see dashboard shell
-- Database is stable enough to build on
-- Fake data exists for testing UI
+- [x] Admin can log in
+- [x] Admin can see dashboard shell
+- [x] Database is stable enough to build on
+- [x] Fake data exists for testing UI
 
 ### Must test
-- Auth works
-- Protected routes work
-- Sample event data renders correctly
-- Role restrictions work
+- [x] Auth works
+- [x] Protected routes work
+- [x] Sample event data renders correctly
+- [x] Role restrictions work
 
 ### Exit criteria
-- You can log in and see an admin dashboard tied to real DB data
+- [x] You can log in and see an admin dashboard tied to real DB data
 
 ---
 

@@ -2,59 +2,59 @@
 
 ## Epic 0 — Product setup
 
-### T-001 Project repository setup
+### T-001 Project repository setup [COMPLETED]
 **Goal:** create the base code repository and initial app scaffold.
 
 **Tasks**
-- Create Git repo
-- Initialize Next.js app with TypeScript
-- Add Tailwind CSS
-- Add ESLint/Prettier
-- Create `.env.example`
-- Set up folder structure for app, components, lib, db, types
+- [x] Create Git repo
+- [x] Initialize Next.js app with TypeScript
+- [x] Add Tailwind CSS
+- [x] Add ESLint/Prettier
+- [x] Create `.env.example`
+- [x] Set up folder structure for app, components, lib, db, types
 
 **Acceptance criteria**
-- App runs locally
-- Repo pushes successfully
-- Basic homepage renders
+- [x] App runs locally
+- [x] Repo pushes successfully
+- [x] Basic homepage renders
 
 **Estimate**
 - 2–4 hours
 
 ---
 
-### T-002 Deployment setup
+### T-002 Deployment setup [COMPLETED]
 **Goal:** connect project to deployment environment.
 
 **Tasks**
-- Create Vercel project
-- Configure environment variables
-- Set preview and production environments
-- Verify auto-deploy from Git
+- [x] Create Vercel project
+- [x] Configure environment variables
+- [x] Set preview and production environments
+- [x] Verify auto-deploy from Git
 
 **Acceptance criteria**
-- Main branch deploys successfully
-- Preview deploy works from feature branch
+- [x] Main branch deploys successfully
+- [x] Preview deploy works from feature branch
 
 **Estimate**
 - 1–2 hours
 
 ---
 
-### T-003 Supabase project setup
+### T-003 Supabase project setup [COMPLETED]
 **Goal:** provision backend services.
 
 **Tasks**
-- Create Supabase project
-- Save project URL and anon/service keys
-- Create Supabase Storage buckets (event-banners, sponsor-logos)
-- Connect app to Supabase
-- Verify DB and Storage connection from app
+- [x] Create Supabase project
+- [x] Save project URL and anon/service keys
+- [x] Create Supabase Storage buckets (event-banners, sponsor-logos)
+- [x] Connect app to Supabase
+- [x] Verify DB and Storage connection from app
 
 **Acceptance criteria**
-- App can query Supabase successfully
-- App can upload/retrieve images from Storage
-- Environment variables work locally and in deployment
+- [x] App can query Supabase successfully
+- [x] App can upload/retrieve images from Storage
+- [x] Environment variables work locally and in deployment
 
 **Estimate**
 - 1–2 hours
@@ -63,7 +63,7 @@
 
 ## Epic 1 — Database and auth
 
-### T-010 Create database schema
+### T-010 Create database schema [COMPLETED]
 **Goal:** create core tables for MVP.
 
 **Tables**
@@ -80,59 +80,59 @@
 - announcements
 
 **Tasks**
-- Write SQL migrations
-- Add indexes
-- Add foreign keys
-- Add enums/status fields
+- [x] Write SQL migrations
+- [x] Add indexes
+- [x] Add foreign keys
+- [x] Add enums/status fields
 
 **Acceptance criteria**
-- All tables exist
-- Relationships validate
-- Sample event and teams can be inserted
+- [x] All tables exist
+- [x] Relationships validate
+- [x] Sample event and teams can be inserted
 
 **Estimate**
 - 4–8 hours
 
 ---
 
-### T-011 Seed sample data
+### T-011 Seed sample data [COMPLETED]
 **Goal:** load fake data for faster development/testing.
 
 **Tasks**
-- Create 1 sample event
-- Create 2 sample divisions
-- Create 8–12 sample teams
-- Create fake matches and announcements
+- [x] Create 1 sample event
+- [x] Create 2 sample divisions
+- [x] Create 8–12 sample teams
+- [x] Create fake matches and announcements
 
 **Acceptance criteria**
-- Local dev instance has usable test data
-- UI can render with no manual DB setup each time
+- [x] Local dev instance has usable test data
+- [x] UI can render with no manual DB setup each time
 
 **Estimate**
 - 2–3 hours
 
 ---
 
-### T-012 Admin authentication
+### T-012 Admin authentication [COMPLETED]
 **Goal:** protect admin tools.
 
 **Tasks**
-- Set up Supabase Auth
-- Create login page
-- Add session handling
-- Add protected admin routes
-- Add logout flow
+- [x] Set up Supabase Auth
+- [x] Create login page
+- [x] Add session handling
+- [x] Add protected admin routes
+- [x] Add logout flow
 
 **Acceptance criteria**
-- Unauthenticated users cannot access admin pages
-- Admin can sign in and out successfully
+- [x] Unauthenticated users cannot access admin pages
+- [x] Admin can sign in and out successfully
 
 **Estimate**
 - 4–6 hours
 
 ---
 
-### T-013 Role-based access control
+### T-013 Role-based access control [COMPLETED]
 **Goal:** define who can do what.
 
 **Roles**
@@ -141,14 +141,14 @@
 - scorekeeper
 
 **Tasks**
-- Add role field to users
-- Add route checks
-- Add UI restrictions by role
+- [x] Add role field to users
+- [x] Add route checks
+- [x] Add UI restrictions by role
 
 **Acceptance criteria**
-- Scorekeeper cannot edit event settings
-- Event admin can manage one event
-- Super admin can access all tools
+- [x] Scorekeeper cannot edit event settings
+- [x] Event admin can manage one event
+- [x] Super admin can access all tools
 
 **Estimate**
 - 3–5 hours
@@ -380,17 +380,17 @@
 
 ## Epic 5 — Admin event management
 
-### T-050 Admin dashboard shell
+### T-050 Admin dashboard shell [COMPLETED]
 **Goal:** create central admin workspace.
 
 **Tasks**
-- Build admin sidebar/nav
-- Add event summary cards
-- Add quick links to divisions, teams, scores, bracket
+- [x] Build admin sidebar/nav
+- [x] Add event summary cards
+- [x] Add quick links to divisions, teams, scores, bracket
 
 **Acceptance criteria**
-- Admin can navigate all core tools easily
-- Current event stats display correctly
+- [x] Admin can navigate all core tools easily
+- [x] Current event stats display correctly
 
 **Estimate**
 - 4–6 hours

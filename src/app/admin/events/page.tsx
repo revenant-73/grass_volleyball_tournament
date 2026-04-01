@@ -1,10 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default async function EventsPage() {
   const supabase = await createClient()
   
-  const { data: events, error } = await supabase
+  const { data: events } = await supabase
     .from('events')
     .select(`
       *,
@@ -36,16 +37,16 @@ export default async function EventsPage() {
 
         {events && events.length > 0 ? (
           <div className="grid grid-cols-1 gap-6">
-            {events.map((event) => (
+            {events.map((event: any) => (
               <div 
                 key={event.id}
                 className="group bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
                 <div className="flex flex-col md:flex-row">
                   {/* Event Thumbnail Placeholder */}
-                  <div className="w-full md:w-48 h-32 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800">
+                  <div className="relative w-full md:w-48 h-32 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800">
                     {event.banner_url ? (
-                      <img src={event.banner_url} alt={event.name} className="w-full h-full object-cover" />
+                      <Image src={event.banner_url} alt={event.name} fill className="object-cover" unoptimized />
                     ) : (
                       <svg className="w-8 h-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -113,7 +114,7 @@ export default async function EventsPage() {
              </div>
              <h2 className="text-2xl font-black text-black dark:text-white uppercase tracking-tighter">No events found</h2>
              <p className="text-zinc-500 dark:text-zinc-400 mt-3 max-w-sm font-bold">
-                You haven't created any events yet. Launch your first tournament to start accepting teams.
+                You haven&apos;t created any events yet. Launch your first tournament to start accepting teams.
              </p>
              <Link 
                href="/admin/events/new"

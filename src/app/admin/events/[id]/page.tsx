@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import QRCodeDownloader from '@/components/admin/QRCodeDownloader'
+import { Division } from '@/types'
 
 export default async function EventDetailPage({
   params,
@@ -21,6 +23,8 @@ export default async function EventDetailPage({
   if (error || !event) {
     notFound()
   }
+
+  const publicUrl = `/events/${event.slug}`
 
   return (
     <div className="p-8 lg:p-12">
@@ -49,9 +53,12 @@ export default async function EventDetailPage({
           </div>
 
           <div className="flex flex-wrap gap-4 ml-12">
-             <button className="px-6 py-2 bg-zinc-100 dark:bg-zinc-900 text-black dark:text-white font-bold rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors uppercase text-sm tracking-tighter">
+             <Link 
+               href={`/admin/events/${event.id}/edit`}
+               className="px-6 py-2 bg-zinc-100 dark:bg-zinc-900 text-black dark:text-white font-bold rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors uppercase text-sm tracking-tighter"
+             >
                 Edit Event
-             </button>
+             </Link>
              <Link 
                href={`/events/${event.slug}`}
                target="_blank"
@@ -75,7 +82,7 @@ export default async function EventDetailPage({
 
               {event.divisions && event.divisions.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4">
-                  {event.divisions.map((division: any) => (
+                  {event.divisions.map((division: Division) => (
                     <div key={division.id} className="p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl flex items-center justify-between group hover:shadow-md transition-all">
                       <div>
                         <h4 className="font-black text-black dark:text-white uppercase tracking-tight">{division.name}</h4>
@@ -101,6 +108,8 @@ export default async function EventDetailPage({
 
           {/* Sidebar: Quick Actions / Stats */}
           <div className="space-y-8">
+            <QRCodeDownloader url={publicUrl} eventName={event.name} />
+            
             <div className="p-8 bg-black text-white dark:bg-white dark:text-black rounded-3xl shadow-xl">
                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-6 opacity-60">Event Stats</h3>
                <div className="space-y-6">
