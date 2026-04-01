@@ -2,11 +2,35 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Enums
-CREATE TYPE user_role AS ENUM ('super_admin', 'event_admin', 'scorekeeper');
-CREATE TYPE event_status AS ENUM ('draft', 'open', 'closed', 'live', 'complete');
-CREATE TYPE team_status AS ENUM ('pending', 'paid', 'waitlisted', 'withdrawn');
-CREATE TYPE match_stage AS ENUM ('pool', 'bracket');
-CREATE TYPE match_status AS ENUM ('upcoming', 'live', 'final');
+DO $$ BEGIN
+    CREATE TYPE user_role AS ENUM ('super_admin', 'event_admin', 'scorekeeper');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE event_status AS ENUM ('draft', 'open', 'closed', 'live', 'complete');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE team_status AS ENUM ('pending', 'paid', 'waitlisted', 'withdrawn');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE match_stage AS ENUM ('pool', 'bracket');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE match_status AS ENUM ('upcoming', 'live', 'final');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Tables
 CREATE TABLE IF NOT EXISTS users (
