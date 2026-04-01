@@ -157,36 +157,36 @@
 
 ## Epic 2 — Public event experience
 
-### T-020 Public homepage
+### T-020 Public homepage [COMPLETED]
 **Goal:** show upcoming events.
 
 **Tasks**
-- Build homepage layout
-- Add upcoming events list
-- Add empty state when no events exist
+- [x] Build homepage layout
+- [x] Add upcoming events list
+- [x] Add empty state when no events exist
 
 **Acceptance criteria**
-- Visitors can see available events
-- Clicking event opens event detail page
+- [x] Visitors can see available events
+- [x] Clicking event opens event detail page
 
 **Estimate**
 - 3–5 hours
 
 ---
 
-### T-021 Public event detail page
+### T-021 Public event detail page [COMPLETED]
 **Goal:** create the main event hub.
 
 **Tasks**
-- Display event title, date, location, price, format
-- Show division list
-- Show registration status
-- Show announcements
-- Add CTA buttons for register / schedule / standings / bracket
+- [x] Display event title, date, location, price, format
+- [x] Show division list
+- [x] Show registration status
+- [x] Show announcements (displayed placeholder/basic info)
+- [x] Add CTA buttons for register / schedule / standings / bracket
 
 **Acceptance criteria**
-- Event page loads correctly from slug
-- Users can reach key actions in one tap
+- [x] Event page loads correctly from slug
+- [x] Users can reach key actions in one tap
 
 **Estimate**
 - 5–8 hours
@@ -397,15 +397,15 @@
 
 ---
 
-### T-051 Event create/edit form
+### T-051 Event create/edit form [COMPLETED]
 **Goal:** allow creation and editing of tournament events.
 
 **Tasks**
-- Build multi-step event form
-- Add banner image upload to Supabase Storage
-- Generate slug from event name
-- Implement CRUD logic
-- Add QR code generation for the public event URL (downloadable)
+- [x] Build multi-step event form
+- [x] Add banner image upload to Supabase Storage
+- [x] Generate slug from event name
+- [x] Implement CRUD logic
+- [x] Add QR code generation for the public event URL (downloadable)
 
 **Fields**
 - name
@@ -419,17 +419,23 @@
 - status
 
 **Acceptance criteria**
-- Admin can create event
-- Admin can edit event
-- Slug-based public page resolves correctly
+- [x] Admin can create event
+- [x] Admin can edit event
+- [x] Slug-based public page resolves correctly
 
 **Estimate**
 - 5–8 hours
 
 ---
 
-### T-052 Division management
+### T-052 Division management [COMPLETED]
 **Goal:** define divisions within an event.
+
+**Tasks**
+- [x] Create DivisionForm component for CRUD operations
+- [x] Implement server actions for Division CRUD
+- [x] Create "Add Division" page
+- [x] Create "Edit Division" page
 
 **Fields**
 - division name
@@ -442,28 +448,28 @@
 - tiebreak rules
 
 **Acceptance criteria**
-- Admin can add/edit/delete divisions
-- Public page reflects current divisions
+- [x] Admin can add/edit/delete divisions
+- [x] Public page reflects current divisions
 
 **Estimate**
 - 4–6 hours
 
 ---
 
-### T-053 Registrations management screen
+### T-053 Registrations management screen [COMPLETED]
 **Goal:** manage all team entries in one place.
 
 **Tasks**
-- Team table view
-- Search/filter
-- Edit team details
-- Mark paid/unpaid
-- Move to waitlist
-- Withdraw team
+- [x] Team table view
+- [x] Search/filter
+- [x] Edit team details
+- [x] Mark paid/unpaid
+- [x] Move to waitlist
+- [x] Withdraw team
 
 **Acceptance criteria**
-- Admin can manage registrations without using DB directly
-- Withdrawn teams are clearly labeled
+- [x] Admin can manage registrations without using DB directly
+- [x] Withdrawn teams are clearly labeled
 
 **Estimate**
 - 5–8 hours
