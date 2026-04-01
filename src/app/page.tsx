@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-zinc-50 font-sans dark:bg-black">
@@ -14,9 +16,9 @@ export default function Home() {
             <button className="px-8 py-4 bg-black text-white dark:bg-white dark:text-black font-semibold rounded-lg hover:opacity-90 transition-opacity">
               Explore Events
             </button>
-            <a href="/login" className="px-8 py-4 border border-zinc-200 dark:border-zinc-800 text-black dark:text-white font-semibold rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-center">
+            <Link href="/login" className="px-8 py-4 border border-zinc-200 dark:border-zinc-800 text-black dark:text-white font-semibold rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-center">
               Admin Login
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-12 border-t border-zinc-100 dark:border-zinc-900">
