@@ -31,5 +31,5 @@ export async function updateSession(request: NextRequest) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   await supabase.auth.getUser()
 
-  return supabaseResponse
+  return { supabase, supabaseResponse }
 }

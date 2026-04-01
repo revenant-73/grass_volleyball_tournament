@@ -39,7 +39,7 @@ export async function createEvent(formData: FormData) {
 
   if (error) {
     console.error('Error creating event:', error)
-    return { error: error.message }
+    redirect(`/admin/events/new?error=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/admin/events')

@@ -1,7 +1,13 @@
 import Link from 'next/link'
 import { createEvent } from './actions'
 
-export default function NewEventPage() {
+export default async function NewEventPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
+
   return (
     <div className="p-8 lg:p-12">
       <div className="max-w-3xl mx-auto">
@@ -23,6 +29,12 @@ export default function NewEventPage() {
             Set up the core details for your tournament.
           </p>
         </header>
+
+        {error && (
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg border border-red-100 dark:border-red-900/30">
+            {error}
+          </div>
+        )}
 
         <form action={createEvent} className="space-y-12">
           {/* Section 1: Basic Info */}

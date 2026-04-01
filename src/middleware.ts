@@ -1,14 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
-import { createClient } from '@/lib/supabase/server'
 
 export async function middleware(request: NextRequest) {
   // Update the session first
-  const response = await updateSession(request)
+  const { supabase, supabaseResponse } = await updateSession(request)
 
   // Protect admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -29,7 +27,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return response
+  return supabaseResponse
 }
 
 export const config = {
