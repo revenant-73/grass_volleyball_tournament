@@ -51,6 +51,7 @@ export interface Team {
   city: string | null
   status: TeamStatus
   manual_seed: number | null
+  pool_id?: string | null
   created_at: string
   updated_at: string
   division?: Division

@@ -27,11 +27,17 @@ export default async function PublicStandingsPage({
 
   const divisionIds = event.divisions.map((d: any) => d.id)
 
-  const { data: teams } = await supabase
+  const { data: teamsData } = await supabase
     .from('teams')
-    .select('*')
+    .select('*, pool_assignments(pool_id)')
     .in('division_id', divisionIds)
     .eq('status', 'paid')
+
+  // Flatten the pool_id into the team object
+  const teams = (teamsData || []).map((t: any) => ({
+    ...t,
+    pool_id: t.pool_assignments?.[0]?.pool_id || null
+  }))
 
   const { data: matches } = await supabase
     .from('matches')
