@@ -14,6 +14,19 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
+
+    // Role check
+    const { data: userData, error } = await supabase
+      .from('users')
+      .select('role')
+      .eq('email', user.email)
+      .single()
+
+    if (error || !userData || (userData.role !== 'super_admin' && userData.role !== 'event_admin')) {
+      // If not an admin, sign them out and redirect
+      await supabase.auth.signOut()
+      return NextResponse.redirect(new URL('/login?error=Unauthorized access', request.url))
+    }
   }
 
   return response
