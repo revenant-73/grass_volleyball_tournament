@@ -85,9 +85,12 @@ export default async function PublicEventDetailPage({
                </p>
             </div>
             {isRegistrationOpen && upcomingDate && (
-               <button className="w-full lg:w-auto px-12 py-5 bg-black text-white dark:bg-white dark:text-black font-black rounded-2xl hover:opacity-90 transition-opacity uppercase tracking-tighter shadow-2xl">
+               <Link 
+                 href={`/events/${event.slug}/register`}
+                 className="w-full lg:w-auto px-12 py-5 bg-black text-white dark:bg-white dark:text-black font-black rounded-2xl hover:opacity-90 transition-opacity uppercase tracking-tighter shadow-2xl text-center"
+               >
                   Register Team
-               </button>
+               </Link>
             )}
           </div>
         </header>
@@ -141,7 +144,11 @@ export default async function PublicEventDetailPage({
               <div className="grid grid-cols-1 gap-6">
                  {event.divisions && event.divisions.length > 0 ? (
                     event.divisions.map((division: Division) => (
-                       <div key={division.id} className="p-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl flex items-center justify-between group hover:border-black dark:hover:border-white transition-all shadow-sm">
+                       <Link 
+                          key={division.id} 
+                          href={`/events/${event.slug}/register?divisionId=${division.id}`}
+                          className="p-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl flex items-center justify-between group hover:border-black dark:hover:border-white transition-all shadow-sm text-left"
+                       >
                           <div>
                              <h3 className="text-2xl font-black text-black dark:text-white uppercase tracking-tighter mb-2">{division.name}</h3>
                              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-3">
@@ -156,7 +163,7 @@ export default async function PublicEventDetailPage({
                              <p className="text-2xl font-black text-black dark:text-white uppercase tracking-tighter">${(division.price_cents || 0) / 100}</p>
                              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">per team</p>
                           </div>
-                       </div>
+                       </Link>
                     ))
                  ) : (
                     <p className="text-zinc-500 font-bold italic">No divisions listed for this event yet.</p>

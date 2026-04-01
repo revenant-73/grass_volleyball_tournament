@@ -32,6 +32,7 @@ export interface Division {
   waitlist_enabled: boolean
   bracket_type: string | null
   teams_advance_count: number | null
+  bracket_published: boolean
   tiebreak_rules_json: Record<string, unknown> | null
   created_at: string
 }
@@ -49,6 +50,7 @@ export interface Team {
   club_name: string | null
   city: string | null
   status: TeamStatus
+  manual_seed: number | null
   created_at: string
   updated_at: string
   division?: Division
@@ -72,4 +74,48 @@ export interface Sponsor {
   website_url: string | null
   display_order: number
   created_at: string
+}
+
+export interface Pool {
+  id: string
+  division_id: string
+  name: string
+  display_order: number
+  created_at: string
+  assignments?: PoolAssignment[]
+}
+
+export interface PoolAssignment {
+  id: string
+  pool_id: string
+  team_id: string
+  seed: number
+  created_at: string
+  team?: Team
+}
+
+export type MatchStage = 'pool' | 'bracket'
+export type MatchStatus = 'upcoming' | 'live' | 'final'
+
+export interface Match {
+  id: string
+  division_id: string
+  stage_type: MatchStage
+  pool_id: string | null
+  bracket_round: number | null
+  team_1_id: string | null
+  team_2_id: string | null
+  team_1_score: number
+  team_2_score: number
+  court: string | null
+  round_number: number | null
+  scheduled_time: string | null
+  status: MatchStatus
+  winner_team_id: string | null
+  source_match_1_id: string | null
+  source_match_2_id: string | null
+  created_at: string
+  updated_at: string
+  team_1?: Team
+  team_2?: Team
 }

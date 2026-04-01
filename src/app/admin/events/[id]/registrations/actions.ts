@@ -60,3 +60,49 @@ export async function updateTeam(eventId: string, teamId: string, formData: Form
 export async function withdrawTeam(eventId: string, teamId: string) {
   return updateTeamStatus(eventId, teamId, 'withdrawn')
 }
+
+export async function toggleCheckIn(eventId: string, teamId: string, isCheckedIn: boolean) {
+  const supabase = await createClient()
+
+  if (isCheckedIn) {
+    // Check in
+    const { error } = await supabase
+      .from('check_ins')
+      .insert([{ team_id: teamId, event_id: eventId }])
+    
+    if (error) throw new Error(error.message)
+  } else {
+    // Undo check in (delete records for this team/event)
+    const { error } = await supabase
+      .from('check_ins')
+      .delete()
+      .eq('team_id', teamId)
+      .eq('event_id', eventId)
+    
+    if (error) throw new Error(error.message)
+  }
+
+  revalidatePath(`/admin/events/${eventId}/check-in`)
+  revalidatePath(`/admin/events/${eventId}/registrations`)
+}
+
+export async function saveSeeding(eventId: string, divisionId: string, teamSeeds: { teamId: string, seed: number }[]) {
+  const supabase = await createClient()
+
+  // We perform individual updates since Supabase doesn't support bulk updates easily with different values per row
+  const updates = teamSeeds.map(ts => 
+    supabase
+      .from('teams')
+      .update({ manual_seed: ts.seed })
+      .eq('id', ts.teamId)
+  )
+
+  const results = await Promise.all(updates)
+  const errors = results.filter(r => r.error)
+
+  if (errors.length > 0) {
+    throw new Error('Failed to save some seeding updates')
+  }
+
+  revalidatePath(`/admin/events/${eventId}/seeding`)
+}

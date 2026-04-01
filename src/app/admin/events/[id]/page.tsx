@@ -146,6 +146,36 @@ export default async function EventDetailPage({
                     Manage Teams
                  </Link>
                  <Link 
+                   href={`/admin/events/${id}/check-in`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Event Check-In
+                 </Link>
+                 <Link 
+                   href={`/admin/events/${id}/seeding`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Seeding Interface
+                 </Link>
+                 <Link 
+                   href={`/admin/events/${id}/pools`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Pool Assignments
+                 </Link>
+                 <Link 
+                   href={`/admin/events/${id}/scores`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Score Entry
+                 </Link>
+                 <Link 
+                   href={`/admin/events/${id}/bracket`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
+                    Bracket Control
+                 </Link>
+                 <Link 
                    href={`/admin/events/${id}/announcements`}
                    className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                  >

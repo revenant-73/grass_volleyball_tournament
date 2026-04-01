@@ -1,0 +1,1 @@
+\"ALTER TABLE divisions ADD COLUMN IF NOT EXISTS bracket_published BOOLEAN DEFAULT FALSE;\" 
