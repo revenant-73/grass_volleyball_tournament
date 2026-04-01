@@ -7,17 +7,18 @@ import { Division } from '@/types'
 export default async function EventDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const supabase = await createClient()
   
   const { data: event, error } = await supabase
     .from('events')
     .select(`
       *,
-      divisions (*)
+      divisions (*, teams(count))
     `)
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !event) {
@@ -25,6 +26,11 @@ export default async function EventDetailPage({
   }
 
   const publicUrl = `/events/${event.slug}`
+
+  // Calculate total teams
+  const totalTeams = event.divisions?.reduce((acc: number, d: Division & { teams?: { count: number }[] }) => acc + (d.teams?.[0]?.count || 0), 0) || 0
+  const totalRevenueCents = event.divisions?.reduce((acc: number, d: Division & { teams?: { count: number }[] }) => acc + ((d.teams?.[0]?.count || 0) * (d.price_cents || 0)), 0) || 0
+  const totalRevenue = totalRevenueCents / 100
 
   return (
     <div className="p-8 lg:p-12">
@@ -75,9 +81,12 @@ export default async function EventDetailPage({
             <section>
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-black text-black dark:text-white uppercase tracking-tighter">Divisions</h2>
-                <button className="px-4 py-2 bg-black text-white dark:bg-white dark:text-black font-bold rounded-lg hover:opacity-90 transition-opacity uppercase text-xs tracking-tighter">
+                <Link 
+                  href={`/admin/events/${id}/divisions/new`}
+                  className="px-4 py-2 bg-black text-white dark:bg-white dark:text-black font-bold rounded-lg hover:opacity-90 transition-opacity uppercase text-xs tracking-tighter"
+                >
                   + Add Division
-                </button>
+                </Link>
               </div>
 
               {event.divisions && event.divisions.length > 0 ? (
@@ -90,11 +99,14 @@ export default async function EventDetailPage({
                           {division.level} • {division.format_type} • {division.team_cap} Teams
                         </p>
                       </div>
-                      <button className="text-zinc-300 group-hover:text-black dark:group-hover:text-white transition-colors">
+                      <Link 
+                        href={`/admin/events/${id}/divisions/${division.id}/edit`}
+                        className="text-zinc-300 group-hover:text-black dark:group-hover:text-white transition-colors"
+                      >
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
-                      </button>
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -114,11 +126,11 @@ export default async function EventDetailPage({
                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-6 opacity-60">Event Stats</h3>
                <div className="space-y-6">
                   <div>
-                    <p className="text-2xl font-black uppercase tracking-tighter">0</p>
+                    <p className="text-2xl font-black uppercase tracking-tighter">{totalTeams}</p>
                     <p className="text-xs font-bold uppercase tracking-widest opacity-60 mt-1">Total Teams</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-black uppercase tracking-tighter">$0.00</p>
+                    <p className="text-2xl font-black uppercase tracking-tighter">${totalRevenue.toFixed(2)}</p>
                     <p className="text-xs font-bold uppercase tracking-widest opacity-60 mt-1">Total Revenue</p>
                   </div>
                </div>
@@ -127,9 +139,12 @@ export default async function EventDetailPage({
             <div className="p-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl">
               <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-6">Tournament Tools</h3>
               <div className="grid grid-cols-1 gap-3">
-                 <button disabled className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-400 font-bold rounded-xl text-left text-sm uppercase tracking-tighter opacity-50 cursor-not-allowed">
+                 <Link 
+                   href={`/admin/events/${id}/registrations`}
+                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold rounded-xl text-left text-sm uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                 >
                     Manage Teams
-                 </button>
+                 </Link>
                  <button disabled className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-400 font-bold rounded-xl text-left text-sm uppercase tracking-tighter opacity-50 cursor-not-allowed">
                     Pool Assignments
                  </button>

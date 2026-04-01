@@ -1,4 +1,5 @@
 export type EventStatus = 'draft' | 'open' | 'closed' | 'live' | 'complete'
+export type TeamStatus = 'pending' | 'paid' | 'waitlisted' | 'withdrawn'
 
 export interface Event {
   id: string
@@ -33,4 +34,22 @@ export interface Division {
   teams_advance_count: number | null
   tiebreak_rules_json: Record<string, unknown> | null
   created_at: string
+}
+
+export interface Team {
+  id: string
+  division_id: string
+  team_name: string
+  captain_name: string
+  captain_email: string
+  captain_phone: string | null
+  partner_name: string | null
+  partner_email: string | null
+  partner_phone: string | null
+  club_name: string | null
+  city: string | null
+  status: TeamStatus
+  created_at: string
+  updated_at: string
+  division?: Division
 }

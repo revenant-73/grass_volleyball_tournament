@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Event } from '@/types'
 
 export default async function EventsPage() {
   const supabase = await createClient()
@@ -37,7 +38,7 @@ export default async function EventsPage() {
 
         {events && events.length > 0 ? (
           <div className="grid grid-cols-1 gap-6">
-            {events.map((event: any) => (
+            {events.map((event: Event & { divisions?: { count: number }[] }) => (
               <div 
                 key={event.id}
                 className="group bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all overflow-hidden"
