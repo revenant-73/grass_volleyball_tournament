@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import { Division, Team, Match, Pool } from '@/types'
 import { calculateStandings } from '@/lib/tournament-logic'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 
 interface PublicStandingsViewProps {
   divisions: Division[]
@@ -54,42 +52,42 @@ export default function PublicStandingsView({
             const standings = calculateStandings(poolTeams, poolMatches)
 
             return (
-              <Card key={pool.id} className="border-zinc-200 dark:border-zinc-800">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-xl font-bold">
+              <div key={pool.id} className="bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm">
+                <div className="p-6 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-900">
+                  <h3 className="text-xl font-bold text-black dark:text-white uppercase tracking-tighter">
                     Pool {pool.name}
-                  </CardTitle>
-                  <Badge variant="outline" className="uppercase">
+                  </h3>
+                  <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-500">
                     {poolTeams.length} Teams
-                  </Badge>
-                </CardHeader>
-                <CardContent>
+                  </span>
+                </div>
+                <div className="p-6">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                          <th className="text-left py-3 font-semibold text-zinc-500">Team</th>
-                          <th className="text-center py-3 font-semibold text-zinc-500">W-L</th>
-                          <th className="text-center py-3 font-semibold text-zinc-500">Diff</th>
-                          <th className="text-center py-3 font-semibold text-zinc-500">Pts For</th>
+                          <th className="text-left py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">Team</th>
+                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">W-L</th>
+                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">Diff</th>
+                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">Pts For</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                         {standings.map((stat, idx) => (
-                          <tr key={stat.team_id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50">
+                          <tr key={stat.team_id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                             <td className="py-4">
                               <div className="flex items-center gap-3">
-                                <span className="text-zinc-400 w-4 font-mono text-xs">{idx + 1}</span>
-                                <span className="font-medium">{stat.team_name}</span>
+                                <span className="text-zinc-300 w-4 font-black text-[10px]">{idx + 1}</span>
+                                <span className="font-bold text-black dark:text-white uppercase tracking-tight">{stat.team_name}</span>
                               </div>
                             </td>
-                            <td className="text-center py-4 font-mono">
+                            <td className="text-center py-4 font-black text-black dark:text-white">
                               {stat.wins}-{stat.losses}
                             </td>
-                            <td className={`text-center py-4 font-mono ${stat.point_diff > 0 ? 'text-emerald-600' : stat.point_diff < 0 ? 'text-rose-600' : ''}`}>
+                            <td className={`text-center py-4 font-black ${stat.point_diff > 0 ? 'text-emerald-600' : stat.point_diff < 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
                               {stat.point_diff > 0 ? `+${stat.point_diff}` : stat.point_diff}
                             </td>
-                            <td className="text-center py-4 text-zinc-500 font-mono">
+                            <td className="text-center py-4 text-zinc-500 font-bold">
                               {stat.points_for}
                             </td>
                           </tr>
@@ -97,13 +95,13 @@ export default function PublicStandingsView({
                       </tbody>
                     </table>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )
           })
         ) : (
-          <div className="lg:col-span-2 py-12 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
-            <p className="text-zinc-500">No pools created yet for this division.</p>
+          <div className="lg:col-span-2 py-24 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-[3rem] border-4 border-dashed border-zinc-100 dark:border-zinc-900">
+            <p className="text-zinc-400 font-black uppercase tracking-widest text-sm">No pools created yet for this division.</p>
           </div>
         )}
       </div>

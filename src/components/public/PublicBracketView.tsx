@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Division, Team, Match } from '@/types'
-import { Card, CardContent } from '@/components/ui/card'
 
 interface PublicBracketViewProps {
   divisions: Division[]
@@ -49,28 +48,28 @@ export default function PublicBracketView({
       </div>
 
       {!isPublished ? (
-        <div className="py-24 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
-          <p className="text-zinc-500 font-medium">
+        <div className="py-24 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-[3rem] border-4 border-dashed border-zinc-100 dark:border-zinc-900">
+          <p className="text-zinc-500 font-black uppercase tracking-widest text-sm">
             The bracket for this division hasn&apos;t been published yet.
           </p>
-          <p className="text-zinc-400 text-sm mt-2">
+          <p className="text-zinc-400 font-bold text-[10px] uppercase tracking-widest mt-4">
             Check back once pool play has concluded!
           </p>
         </div>
       ) : divisionMatches.length === 0 ? (
-        <div className="py-24 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
-          <p className="text-zinc-500 font-medium">
+        <div className="py-24 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-[3rem] border-4 border-dashed border-zinc-100 dark:border-zinc-900">
+          <p className="text-zinc-500 font-black uppercase tracking-widest text-sm">
             No bracket matches generated for this division.
           </p>
         </div>
       ) : (
-        <div className="flex flex-col md:flex-row items-start gap-8 overflow-x-auto pb-8 min-h-[400px]">
+        <div className="flex flex-col md:flex-row items-start gap-8 overflow-x-auto pb-12 min-h-[500px] custom-scrollbar">
           {rounds.map((round) => (
-            <div key={round} className="flex-1 min-w-[280px] space-y-6">
-              <h3 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] border-b border-zinc-100 dark:border-zinc-900 pb-4">
+            <div key={round} className="flex-1 min-w-[300px] space-y-8">
+              <h3 className="text-xs font-black text-zinc-400 uppercase tracking-[0.3em] border-b border-zinc-100 dark:border-zinc-900 pb-6">
                 {round === 1 ? 'Round 1' : round === 2 ? 'Semifinals' : round === 3 ? 'Finals' : `Round ${round}`}
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {divisionMatches
                   .filter((m) => m.bracket_round === round)
                   .map((match) => {
@@ -79,26 +78,27 @@ export default function PublicBracketView({
                     const isFinal = match.status === 'final'
 
                     return (
-                      <Card key={match.id} className="border-zinc-200 dark:border-zinc-800 overflow-hidden">
-                        <CardContent className="p-4 space-y-3">
-                          <div className="flex items-center justify-between gap-4">
-                            <span className={`font-bold text-sm truncate ${isFinal && match.winner_team_id === team1?.id ? 'text-emerald-600' : 'text-zinc-600 dark:text-zinc-300'}`}>
+                      <div key={match.id} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div className="p-6 space-y-4">
+                          <div className="flex items-center justify-between gap-6">
+                            <span className={`font-black uppercase tracking-tight text-sm truncate ${isFinal && match.winner_team_id === team1?.id ? 'text-emerald-600' : 'text-zinc-600 dark:text-zinc-400'}`}>
                               {team1?.team_name || 'TBD'}
                             </span>
-                            <span className="font-mono font-black text-lg">
+                            <span className="font-black text-xl tabular-nums">
                               {match.team_1_score}
                             </span>
                           </div>
-                          <div className="flex items-center justify-between gap-4">
-                            <span className={`font-bold text-sm truncate ${isFinal && match.winner_team_id === team2?.id ? 'text-emerald-600' : 'text-zinc-600 dark:text-zinc-300'}`}>
+                          <div className="h-px bg-zinc-50 dark:bg-zinc-900" />
+                          <div className="flex items-center justify-between gap-6">
+                            <span className={`font-black uppercase tracking-tight text-sm truncate ${isFinal && match.winner_team_id === team2?.id ? 'text-emerald-600' : 'text-zinc-600 dark:text-zinc-400'}`}>
                               {team2?.team_name || 'TBD'}
                             </span>
-                            <span className="font-mono font-black text-lg">
+                            <span className="font-black text-xl tabular-nums">
                               {match.team_2_score}
                             </span>
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     )
                   })}
               </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { login } from './actions'
 import { Suspense, useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
@@ -73,9 +74,9 @@ function LoginForm() {
         </form>
 
         <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-900 text-center">
-          <a href="/" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors">
+          <Link href="/" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors">
             &larr; Back to Public Page
-          </a>
+          </Link>
         </div>
       </div>
     </div>
