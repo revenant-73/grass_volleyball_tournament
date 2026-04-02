@@ -1,4 +1,4 @@
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
   const body = await req.text()
   const headerList = await headers()
   const sig = headerList.get('stripe-signature') as string
+  const stripe = getStripe()
 
   let event: Stripe.Event
 

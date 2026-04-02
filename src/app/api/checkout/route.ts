@@ -1,6 +1,8 @@
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -11,6 +13,7 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = await createClient()
+  const stripe = getStripe()
 
   // Fetch team and division details
   const { data: team, error: teamError } = await supabase
