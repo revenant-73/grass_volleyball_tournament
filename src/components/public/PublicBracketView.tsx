@@ -31,15 +31,15 @@ export default function PublicBracketView({
   return (
     <div className="space-y-8">
       {/* Division Selector */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
         {divisions.map((division) => (
           <button
             key={division.id}
             onClick={() => setSelectedDivisionId(division.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
               selectedDivisionId === division.id
-                ? 'bg-zinc-900 text-white dark:bg-white dark:text-black'
-                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'
+                ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg'
+                : 'bg-zinc-100 text-zinc-400 hover:text-black dark:bg-zinc-900 dark:hover:text-white'
             }`}
           >
             {division.name}
@@ -63,9 +63,9 @@ export default function PublicBracketView({
           </p>
         </div>
       ) : (
-        <div className="flex flex-col md:flex-row items-start gap-8 overflow-x-auto pb-12 min-h-[500px] custom-scrollbar">
+        <div className="flex flex-row items-start gap-4 md:gap-8 overflow-x-auto pb-12 min-h-[500px] no-scrollbar">
           {rounds.map((round) => (
-            <div key={round} className="flex-1 min-w-[300px] space-y-8">
+            <div key={round} className="flex-shrink-0 w-[280px] md:w-[320px] space-y-8">
               <h3 className="text-xs font-black text-zinc-400 uppercase tracking-[0.3em] border-b border-zinc-100 dark:border-zinc-900 pb-6">
                 {round === 1 ? 'Round 1' : round === 2 ? 'Semifinals' : round === 3 ? 'Finals' : `Round ${round}`}
               </h3>

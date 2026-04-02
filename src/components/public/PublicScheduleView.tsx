@@ -40,12 +40,12 @@ export default function PublicScheduleView({ divisions, initialMatches }: Public
   return (
     <div className="space-y-12 pb-24">
       {/* Division Selector */}
-      <div className="flex flex-wrap items-center gap-4 bg-zinc-100 dark:bg-zinc-900 p-2 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800">
+      <div className="flex items-center gap-4 bg-zinc-100 dark:bg-zinc-900 p-2 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 overflow-x-auto no-scrollbar">
         {divisions.map(d => (
           <button
             key={d.id}
             onClick={() => setActiveDivisionId(d.id)}
-            className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+            className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
               activeDivisionId === d.id 
                 ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg' 
                 : 'text-zinc-400 hover:text-black dark:hover:text-white'

@@ -164,7 +164,7 @@ export default async function Home() {
                  </div>
                  <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center p-8">
-                       <p className="text-xl font-black uppercase tracking-tighter mb-4 italic">No more "Wait, what court are we on?"</p>
+                       <p className="text-xl font-black uppercase tracking-tighter mb-4 italic">No more &quot;Wait, what court are we on?&quot;</p>
                        <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Available on any mobile browser.</p>
                     </div>
                  </div>

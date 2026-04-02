@@ -28,15 +28,15 @@ export default function PublicStandingsView({
   return (
     <div className="space-y-8">
       {/* Division Selector */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
         {divisions.map((division) => (
           <button
             key={division.id}
             onClick={() => setSelectedDivisionId(division.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
               selectedDivisionId === division.id
-                ? 'bg-zinc-900 text-white dark:bg-white dark:text-black'
-                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'
+                ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg'
+                : 'bg-zinc-100 text-zinc-400 hover:text-black dark:bg-zinc-900 dark:hover:text-white'
             }`}
           >
             {division.name}

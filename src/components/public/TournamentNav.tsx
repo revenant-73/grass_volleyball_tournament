@@ -28,14 +28,14 @@ export default function TournamentNav({ slug, eventName }: TournamentNavProps) {
                </h1>
             </Link>
          </div>
-         <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-900 p-1.5 rounded-2xl">
+         <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-900 p-1.5 rounded-2xl overflow-x-auto overflow-y-hidden no-scrollbar">
             {tabs.map((tab) => {
               const isActive = pathname === tab.href
               return (
                 <Link
                   key={tab.name}
                   href={tab.href}
-                  className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                  className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                     isActive
                       ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg'
                       : 'text-zinc-400 hover:text-black dark:hover:text-white'
