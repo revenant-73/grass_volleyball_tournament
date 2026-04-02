@@ -5,6 +5,7 @@ import { Team, Division, Pool } from '@/types'
 import { createPools, clearPools, generatePoolMatches, clearPoolMatches } from '@/app/admin/events/[id]/pools/actions'
 import { createClient } from '@/lib/supabase/client'
 import { Match } from '@/types'
+import { getRecommendedFormat, getPoolSizes } from '@/lib/tournament-formats'
 
 interface PoolBuilderProps {
   eventId: string
@@ -35,6 +36,8 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
 
   const currentDivisionPools = existingPools.filter(p => p.division_id === divisionId)
   const divisionTeams = initialTeams.filter(t => t.division_id === divisionId)
+  
+  const recommendedFormat = getRecommendedFormat(divisionTeams.length)
 
   const generateSnakePools = () => {
     const pools: { name: string, teamIds: string[], teams: Team[] }[] = []
@@ -67,6 +70,48 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     setPreviewPools(pools)
   }
 
+  const applyRecommendedSetup = () => {
+    if (!recommendedFormat) return
+    
+    const sizes = getPoolSizes(divisionTeams.length)
+    if (sizes.length === 0) return
+
+    const pools: { name: string, teamIds: string[], teams: Team[] }[] = []
+    sizes.forEach((_, i) => {
+      pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [] })
+    })
+
+    // Sort by manual_seed
+    const sortedTeams = [...divisionTeams].sort((a, b) => {
+       const seedA = a.manual_seed || 999
+       const seedB = b.manual_seed || 999
+       return seedA - seedB
+    })
+
+    // Distribute teams based on sizes (snake draft style)
+    let teamIndex = 0
+    let reverse = false
+    let maxTeamsInAnyPool = Math.max(...sizes)
+
+    // For mixed pool sizes, we iterate round by round
+    for (let round = 0; round < maxTeamsInAnyPool; round++) {
+      const poolOrder = reverse 
+        ? [...Array(sizes.length).keys()].reverse()
+        : [...Array(sizes.length).keys()]
+      
+      for (const pIdx of poolOrder) {
+        if (pools[pIdx].teams.length < sizes[pIdx] && teamIndex < sortedTeams.length) {
+          const team = sortedTeams[teamIndex++]
+          pools[pIdx].teamIds.push(team.id)
+          pools[pIdx].teams.push(team)
+        }
+      }
+      reverse = !reverse
+    }
+
+    setPreviewPools(pools)
+  }
+
   const handleSave = async () => {
     if (!confirm('This will replace any existing pools for this division. Continue?')) return
     setLoading(true)
@@ -95,7 +140,51 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
 
   return (
     <div className="space-y-12 pb-24">
-       <div className="flex flex-wrap items-center justify-between gap-6">
+       {/* Recommendation Section */}
+       {divisionTeams.length > 0 && (
+         <div className={`p-8 rounded-[2.5rem] border-2 transition-all ${
+           divisionTeams.length === 7 
+             ? 'bg-red-50 border-red-100 dark:bg-red-900/10 dark:border-red-900/20' 
+             : 'bg-zinc-900 border-zinc-800 text-white'
+         }`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+               <div>
+                  <div className="flex items-center gap-3 mb-2">
+                     <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${
+                       divisionTeams.length === 7 ? 'bg-red-600 text-white' : 'bg-white/20 text-white'
+                     }`}>
+                        {divisionTeams.length} Teams Checked In
+                     </span>
+                     {recommendedFormat && (
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                           {recommendedFormat.waves} Waves • {recommendedFormat.courts} Courts
+                        </span>
+                     )}
+                  </div>
+                  <h2 className={`text-2xl font-black uppercase tracking-tighter leading-tight ${divisionTeams.length === 7 ? 'text-red-600 dark:text-red-500' : ''}`}>
+                     {divisionTeams.length === 7 
+                       ? "7 Teams: No Clean Format" 
+                       : recommendedFormat?.description || "Custom Format Required"}
+                  </h2>
+                  <p className={`mt-2 font-bold text-sm ${divisionTeams.length === 7 ? 'text-red-400' : 'text-zinc-400'}`}>
+                     {divisionTeams.length === 7 
+                       ? "Rules prevent lone 3-team pools and require 5-team pools to use 2 courts. Please manually adjust."
+                       : recommendedFormat?.layout || "Manual distribution required for this team count."}
+                  </p>
+               </div>
+               {recommendedFormat && divisionTeams.length !== 7 && (
+                  <button 
+                    onClick={applyRecommendedSetup}
+                    className="px-8 py-4 bg-white text-black font-black rounded-2xl uppercase tracking-tighter hover:bg-zinc-200 transition-colors shadow-xl"
+                  >
+                     Use Recommended Setup
+                  </button>
+               )}
+            </div>
+         </div>
+       )}
+
+       <div className="flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-zinc-100 dark:border-zinc-900">
           <div className="flex items-center gap-4 bg-zinc-50 dark:bg-zinc-900 p-2 rounded-2xl border-2 border-zinc-100 dark:border-zinc-800">
             {divisions.map(d => (
               <button

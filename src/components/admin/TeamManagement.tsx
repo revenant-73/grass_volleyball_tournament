@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Team, Division, TeamStatus } from '@/types'
-import { updateTeamStatus, withdrawTeam } from '@/app/admin/events/[id]/registrations/actions'
+import { updateTeamStatus, withdrawTeam, refundTeam } from '@/app/admin/events/[id]/registrations/actions'
 import TeamEditForm from './TeamEditForm'
 
 interface TeamManagementProps {
@@ -16,6 +16,7 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
   const [divisionFilter, setDivisionFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [editingTeam, setEditingTeam] = useState<Team | null>(null)
+  const [isRefunding, setIsRefunding] = useState<string | null>(null)
 
   const filteredTeams = initialTeams.filter(team => {
     const matchesSearch = 
@@ -45,6 +46,21 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
     } catch (err) {
       console.error('Error withdrawing team:', err)
       alert('Failed to withdraw team')
+    }
+  }
+
+  const handleRefund = async (teamId: string) => {
+    if (!confirm('Refund this team? This will trigger a full refund in Stripe and withdraw the team.')) return
+    
+    setIsRefunding(teamId)
+    try {
+      await refundTeam(eventId, teamId)
+      alert('Refund processed successfully')
+    } catch (err: any) {
+      console.error('Error refunding team:', err)
+      alert(err.message || 'Failed to refund team')
+    } finally {
+      setIsRefunding(null)
     }
   }
 
@@ -139,6 +155,25 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
+                      {team.status === 'paid' && (
+                        <button
+                          onClick={() => handleRefund(team.id)}
+                          disabled={isRefunding === team.id}
+                          className={`p-2 transition-colors ${isRefunding === team.id ? 'text-zinc-200 cursor-not-allowed' : 'text-zinc-400 hover:text-orange-600'}`}
+                          title="Refund & Withdraw"
+                        >
+                          {isRefunding === team.id ? (
+                            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          )}
+                        </button>
+                      )}
                       {team.status !== 'withdrawn' && (
                         <button
                           onClick={() => handleWithdraw(team.id)}

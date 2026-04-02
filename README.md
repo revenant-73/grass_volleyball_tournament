@@ -35,6 +35,24 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Tournament Logic & Formats
+
+The platform includes built-in logic for optimal tournament formatting (3-32 teams).
+
+### Key Features:
+- **Automated Recommendations**: Sugggests pool counts, court counts, and wave distribution based on team count.
+- **Paired 3-Team Pools**: Automatically handles "paired" 3-team pool formats with crossovers to ensure a minimum of 4 matches per team.
+- **Snake Draft Distribution**: Evenly distributes teams into pools based on their seeds.
+- **Edge Case Handling**: Specifically identifies and warns about the "7-team" conflict where no clean format exists under standard rules.
+
+### Ruleset:
+- Pool sizes are limited to 3, 4, or 5 teams.
+- Lone 3-team pools are prevented (must be paired).
+- 5-team pools are assigned to 2 courts to maintain a 5-wave schedule.
+- 4-team pools automatically trigger a 6-wave schedule.
+
+---
+
 ## Deployment & Stability
 
 To ensure stable builds on Vercel, this project follows specific patterns to handle environment variables that are only available at runtime (like `STRIPE_SECRET_KEY`):

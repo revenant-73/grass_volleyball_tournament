@@ -3,898 +3,178 @@
 ## Epic 0 — Product setup
 
 ### T-001 Project repository setup [COMPLETED]
-**Goal:** create the base code repository and initial app scaffold.
-
-**Tasks**
-- [x] Create Git repo
-- [x] Initialize Next.js app with TypeScript
-- [x] Add Tailwind CSS
-- [x] Add ESLint/Prettier
-- [x] Create `.env.example`
-- [x] Set up folder structure for app, components, lib, db, types
-
-**Acceptance criteria**
-- [x] App runs locally
-- [x] Repo pushes successfully
-- [x] Basic homepage renders
-
-**Estimate**
-- 2–4 hours
-
----
+- [x] Git repo setup
+- [x] Next.js initialization
+- [x] Tailwind CSS & ESLint
 
 ### T-002 Deployment setup [COMPLETED]
-**Goal:** connect project to deployment environment.
-
-**Tasks**
-- [x] Create Vercel project
-- [x] Configure environment variables
-- [x] Set preview and production environments
-- [x] Verify auto-deploy from Git
-
-**Acceptance criteria**
-- [x] Main branch deploys successfully
-- [x] Preview deploy works from feature branch
-
-**Estimate**
-- 1–2 hours
-
----
+- [x] Vercel project configuration
+- [x] Environment variables setup
 
 ### T-003 Supabase project setup [COMPLETED]
-**Goal:** provision backend services.
-
-**Tasks**
-- [x] Create Supabase project
-- [x] Save project URL and anon/service keys
-- [x] Create Supabase Storage buckets (event-banners, sponsor-logos)
-- [x] Connect app to Supabase
-- [x] Verify DB and Storage connection from app
-
-**Acceptance criteria**
-- [x] App can query Supabase successfully
-- [x] App can upload/retrieve images from Storage
-- [x] Environment variables work locally and in deployment
-
-**Estimate**
-- 1–2 hours
+- [x] DB connection
+- [x] Storage buckets (banners, logos)
 
 ---
 
 ## Epic 1 — Database and auth
 
 ### T-010 Create database schema [COMPLETED]
-**Goal:** create core tables for MVP.
-
-**Tables**
-- users
-- events
-- divisions
-- teams
-- waivers
-- payments
-- check_ins
-- pools
-- pool_assignments
-- matches
-- announcements
-
-**Tasks**
-- [x] Write SQL migrations
-- [x] Add indexes
-- [x] Add foreign keys
-- [x] Add enums/status fields
-
-**Acceptance criteria**
-- [x] All tables exist
-- [x] Relationships validate
-- [x] Sample event and teams can be inserted
-
-**Estimate**
-- 4–8 hours
-
----
+- [x] Core tables (events, teams, divisions, matches, etc.)
+- [x] Migrations and RLS policies
 
 ### T-011 Seed sample data [COMPLETED]
-**Goal:** load fake data for faster development/testing.
-
-**Tasks**
-- [x] Create 1 sample event
-- [x] Create 2 sample divisions
-- [x] Create 8–12 sample teams
-- [x] Create fake matches and announcements
-
-**Acceptance criteria**
-- [x] Local dev instance has usable test data
-- [x] UI can render with no manual DB setup each time
-
-**Estimate**
-- 2–3 hours
-
----
+- [x] Pilot data for UI testing
 
 ### T-012 Admin authentication [COMPLETED]
-**Goal:** protect admin tools.
-
-**Tasks**
-- [x] Set up Supabase Auth
-- [x] Create login page
-- [x] Add session handling
-- [x] Add protected admin routes
-- [x] Add logout flow
-
-**Acceptance criteria**
-- [x] Unauthenticated users cannot access admin pages
-- [x] Admin can sign in and out successfully
-
-**Estimate**
-- 4–6 hours
-
----
+- [x] Supabase Auth integration
+- [x] Protected /admin routes
 
 ### T-013 Role-based access control [COMPLETED]
-**Goal:** define who can do what.
-
-**Roles**
-- super_admin
-- event_admin
-- scorekeeper
-
-**Tasks**
-- [x] Add role field to users
-- [x] Add route checks
-- [x] Add UI restrictions by role
-
-**Acceptance criteria**
-- [x] Scorekeeper cannot edit event settings
-- [x] Event admin can manage one event
-- [x] Super admin can access all tools
-
-**Estimate**
-- 3–5 hours
+- [x] Super Admin vs Scorekeeper roles
 
 ---
 
 ## Epic 2 — Public event experience
 
 ### T-020 Public homepage [COMPLETED]
-**Goal:** show upcoming events.
-
-**Tasks**
-- [x] Build homepage layout
-- [x] Add upcoming events list
-- [x] Add empty state when no events exist
-
-**Acceptance criteria**
-- [x] Visitors can see available events
-- [x] Clicking event opens event detail page
-
-**Estimate**
-- 3–5 hours
-
----
+- [x] List upcoming events
 
 ### T-021 Public event detail page [COMPLETED]
-**Goal:** create the main event hub.
+- [x] Event hub with registration and info
 
-**Tasks**
-- [x] Display event title, date, location, price, format
-- [x] Show division list
-- [x] Show registration status
-- [x] Show announcements (displayed placeholder/basic info)
-- [x] Add CTA buttons for register / schedule / standings / bracket
+### T-022 Public schedule page [COMPLETED]
+- [x] Live pool and bracket match lists
 
-**Acceptance criteria**
-- [x] Event page loads correctly from slug
-- [x] Users can reach key actions in one tap
+### T-023 Public standings page [COMPLETED]
+- [x] Live pool standings with tiebreakers
 
-**Estimate**
-- 5–8 hours
-
----
-
-### T-022 Public schedule page
-**Goal:** show event schedule and results.
-
-**Tasks**
-- Build match list grouped by round or court
-- Show upcoming/live/final states
-- Show scores when available
-
-**Acceptance criteria**
-- Spectators can find current and upcoming matches easily
-- Completed matches show final scores
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-023 Public standings page
-**Goal:** show pool standings clearly.
-
-**Tasks**
-- Display standings by pool
-- Show wins/losses
-- Show tiebreak metrics
-- Highlight advancing teams
-
-**Acceptance criteria**
-- Standings update when scores change
-- Tiebreak order displays correctly
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-024 Public bracket page
-**Goal:** show elimination bracket.
-
-**Tasks**
-- Build bracket display
-- Show round labels
-- Show winners advancing
-
-**Acceptance criteria**
-- Bracket is readable on mobile
-- Updates correctly after score entry
-
-**Estimate**
-- 5–8 hours
+### T-024 Public bracket page [COMPLETED]
+- [x] Live elimination bracket display
 
 ---
 
 ## Epic 3 — Registration and waivers
 
-### T-030 Registration form UI
-**Goal:** allow team signups.
+### T-030 Registration form UI [COMPLETED]
+- [x] Dynamic team signup form
 
-**Fields**
-- division
-- team name
-- captain name/email/phone
-- partner name/email/phone
-- optional city/club
+### T-031 Registration backend logic [COMPLETED]
+- [x] DB persistence and validation
 
-**Tasks**
-- Build form
-- Validate required fields
-- Handle division capacity
+### T-032 Waiver capture [COMPLETED]
+- [x] Digital waiver acceptance tracking
 
-**Acceptance criteria**
-- Valid registrations submit successfully
-- Invalid/incomplete forms are blocked
-
-**Estimate**
-- 6–10 hours
-
----
-
-### T-031 Registration backend logic
-**Goal:** persist team registrations correctly.
-
-**Tasks**
-- Create registration service
-- Insert team into DB
-- Mark status as pending until payment
-- Enforce team cap / waitlist
-
-**Acceptance criteria**
-- Team is created correctly in DB
-- Full divisions trigger waitlist when enabled
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-032 Waiver capture
-**Goal:** collect waiver acceptance during registration.
-
-**Tasks**
-- Add waiver section to registration flow
-- Store signed name, timestamp, version
-- Require waiver acceptance before payment
-
-**Acceptance criteria**
-- Registration cannot complete without waiver
-- Waiver record persists correctly
-
-**Estimate**
-- 3–5 hours
-
----
-
-### T-033 Registration confirmation page
-**Goal:** confirm successful signup/payment.
-
-**Tasks**
-- Build success page
-- Show event, team, division, payment summary
-- Add next-step instructions
-
-**Acceptance criteria**
-- Team sees clear confirmation after checkout
-- Page loads from Stripe redirect successfully
-
-**Estimate**
-- 2–4 hours
+### T-033 Registration confirmation page [COMPLETED]
+- [x] Success state after checkout
 
 ---
 
 ## Epic 4 — Payments
 
-### T-040 Stripe integration setup
-**Goal:** connect Stripe Checkout.
+### T-040 Stripe integration setup [COMPLETED]
+- [x] Stripe Checkout session creation
 
-**Tasks**
-- Create Stripe account config
-- Build checkout session creator
-- Redirect registration flow to Stripe Checkout
+### T-041 Stripe webhook handler [COMPLETED]
+- [x] Success listener to mark teams as "Paid"
 
-**Acceptance criteria**
-- Test payment opens Stripe Checkout
-- Successful payment returns user to app
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-041 Stripe webhook handler
-**Goal:** track payment status reliably.
-
-**Tasks**
-- Create `/api/stripe/webhook`
-- Handle checkout completed
-- Handle payment success
-- Store Stripe IDs and payment status
-- Update team registration status
-
-**Acceptance criteria**
-- Payment success marks team as paid
-- Duplicate webhook delivery does not break state
-
-**Estimate**
-- 5–8 hours
-
----
-
-### T-042 Refund/cancel support
-**Goal:** basic admin control for payment reversals.
-
-**Tasks**
-- Add payment status display in admin
-- Add refund/cancel action placeholder or manual status control
-- Ensure refunded team can be withdrawn cleanly
-
-**Acceptance criteria**
-- Admin can mark refunded/cancelled state safely
-- Team no longer appears as active paid team
-
-**Estimate**
-- 3–5 hours
+### T-042 Refund/cancel support [COMPLETED]
+- [x] Automated Stripe refund trigger in admin dashboard
 
 ---
 
 ## Epic 5 — Admin event management
 
 ### T-050 Admin dashboard shell [COMPLETED]
-**Goal:** create central admin workspace.
-
-**Tasks**
-- [x] Build admin sidebar/nav
-- [x] Add event summary cards
-- [x] Add quick links to divisions, teams, scores, bracket
-
-**Acceptance criteria**
-- [x] Admin can navigate all core tools easily
-- [x] Current event stats display correctly
-
-**Estimate**
-- 4–6 hours
-
----
+- [x] Global sidebar and navigation
 
 ### T-051 Event create/edit form [COMPLETED]
-**Goal:** allow creation and editing of tournament events.
-
-**Tasks**
-- [x] Build multi-step event form
-- [x] Add banner image upload to Supabase Storage
-- [x] Generate slug from event name
-- [x] Implement CRUD logic
-- [x] Add QR code generation for the public event URL (downloadable)
-
-**Fields**
-- name
-- slug
-- description
-- date
-- location
-- registration open/close
-- check-in time
-- start time
-- status
-
-**Acceptance criteria**
-- [x] Admin can create event
-- [x] Admin can edit event
-- [x] Slug-based public page resolves correctly
-
-**Estimate**
-- 5–8 hours
-
----
+- [x] Multi-step event management form
 
 ### T-052 Division management [COMPLETED]
-**Goal:** define divisions within an event.
-
-**Tasks**
-- [x] Create DivisionForm component for CRUD operations
-- [x] Implement server actions for Division CRUD
-- [x] Create "Add Division" page
-- [x] Create "Edit Division" page
-
-**Fields**
-- division name
-- level
-- format
-- team cap
-- price
-- waitlist enabled
-- teams advancing
-- tiebreak rules
-
-**Acceptance criteria**
-- [x] Admin can add/edit/delete divisions
-- [x] Public page reflects current divisions
-
-**Estimate**
-- 4–6 hours
-
----
+- [x] CRUD for tournament divisions
 
 ### T-053 Registrations management screen [COMPLETED]
-**Goal:** manage all team entries in one place.
-
-**Tasks**
-- [x] Team table view
-- [x] Search/filter
-- [x] Edit team details
-- [x] Mark paid/unpaid
-- [x] Move to waitlist
-- [x] Withdraw team
-
-**Acceptance criteria**
-- [x] Admin can manage registrations without using DB directly
-- [x] Withdrawn teams are clearly labeled
-
-**Estimate**
-- 5–8 hours
+- [x] Team lists and manual status edits
 
 ---
 
 ## Epic 6 — Check-in and event-day control
 
-### T-060 Check-in screen
-**Goal:** support fast team check-in on event day.
+### T-060 Check-in screen [COMPLETED]
+- [x] Rapid check-in interface for morning-of operations
 
-**Tasks**
-- Build team list with check-in controls
-- Add status options: checked in, late, withdrawn
-- Add notes field
-- Add filter for unchecked teams
-
-**Acceptance criteria**
-- Admin can check teams in quickly from phone/tablet
-- No-show teams are easy to identify
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-061 Partner edit / emergency fix tool
-**Goal:** allow last-minute team edits.
-
-**Tasks**
-- Allow admin to update partner info
-- Log change timestamp
-- Prevent accidental edits after bracket publish if needed
-
-**Acceptance criteria**
-- Admin can repair a team entry in under 1 minute
-- Update does not break schedule logic
-
-**Estimate**
-- 2–4 hours
+### T-061 Partner edit / emergency fix tool [COMPLETED]
+- [x] Last-minute team data repairs
 
 ---
 
 ## Epic 7 — Pool generation and standings
 
-### T-070 Manual seeding interface
-**Goal:** give admin seed control before pool generation.
+### T-070 Manual seeding interface [COMPLETED]
+- [x] Drag-and-drop or manual seed entry
 
-**Tasks**
-- Show registered checked-in teams
-- Allow manual seed order
-- Add randomize option
+### T-071 Pool assignment builder [COMPLETED]
+- [x] Automated tournament formatting (3-32 teams)
+- [x] Snake draft distribution logic
 
-**Acceptance criteria**
-- Admin can reorder teams easily
-- Seeds are saved for later generation
+### T-072 Round-robin match generator [COMPLETED]
+- [x] Automated pool match generation
 
-**Estimate**
-- 4–6 hours
-
----
-
-### T-071 Pool assignment builder
-**Goal:** place teams into pools.
-
-**Tasks**
-- Create pools automatically from seed order
-- Allow manual drag/drop or reassignment
-- Support MVP formats:
-  - 4-team pool
-  - 2 pools of 4
-
-**Acceptance criteria**
-- Pools generate correctly
-- Admin can manually edit assignments
-
-**Estimate**
-- 5–8 hours
-
----
-
-### T-072 Round-robin match generator
-**Goal:** generate pool play matches.
-
-**Tasks**
-- Create round-robin logic for 4-team pools
-- Assign round numbers
-- Assign courts
-- Store matches in DB
-
-**Acceptance criteria**
-- Correct number of matches created
-- No duplicate pairings
-- Matches display in schedule
-
-**Estimate**
-- 6–10 hours
-
----
-
-### T-073 Standings calculator
-**Goal:** compute pool standings.
-
-**Tasks**
-- Calculate wins/losses
-- Apply tiebreak rules
-- Save or compute standings for display
-
-**Acceptance criteria**
-- Standings update after each completed match
-- Tie scenarios resolve according to rules
-
-**Estimate**
-- 5–8 hours
+### T-073 Standings calculator [COMPLETED]
+- [x] Automatic tiebreaker processing (Wins > Diff > For)
 
 ---
 
 ## Epic 8 — Bracket generation
 
-### T-080 Bracket seeding from standings
-**Goal:** convert pool results into elimination seeds.
+### T-080 Bracket seeding from standings [COMPLETED]
+- [x] Automated advancement from pool results
 
-**Tasks**
-- Pull top teams from standings
-- Build seed order
-- Allow admin override before publish
+### T-081 Single-elimination bracket generator [COMPLETED]
+- [x] QF/SF/Finals generation based on team count
 
-**Acceptance criteria**
-- Qualified teams seed correctly
-- Admin can manually change seeds before bracket creation
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-081 Single-elimination bracket generator
-**Goal:** build bracket structure for MVP.
-
-**Tasks**
-- Generate 4-team and 8-team single-elim bracket
-- Create bracket matches
-- Link source matches for advancement
-
-**Acceptance criteria**
-- Bracket structure is valid
-- Future winners can advance automatically
-
-**Estimate**
-- 6–10 hours
-
----
-
-### T-082 Bracket display and publish controls
-**Goal:** make bracket visible and editable.
-
-**Tasks**
-- Add publish/unpublish state
-- Show bracket in admin and public views
-- Lock or warn before changes after publish
-
-**Acceptance criteria**
-- Admin can publish bracket cleanly
-- Public sees correct bracket after publish
-
-**Estimate**
-- 4–6 hours
+### T-082 Bracket display and publish controls [COMPLETED]
+- [x] Visibility toggle for elimination rounds
 
 ---
 
 ## Epic 9 — Score entry and live updates
 
-### T-090 Score entry interface
-**Goal:** enable rapid score submission.
+### T-090 Score entry interface [COMPLETED]
+- [x] Fast mobile score input for admins
 
-**Tasks**
-- Build match picker
-- Input team 1 / team 2 scores
-- Mark match complete
-- Add edit/correction flow
+### T-091 Score processing logic [COMPLETED]
+- [x] Automated bracket advancement on score entry
 
-**Acceptance criteria**
-- Admin or scorekeeper can enter scores in seconds
-- Completed match updates public results
-
-**Estimate**
-- 5–8 hours
-
----
-
-### T-091 Score processing logic
-**Goal:** update downstream systems after scores.
-
-**Tasks**
-- Save scores
-- Set winner
-- Update standings
-- Advance bracket winner when applicable
-
-**Acceptance criteria**
-- Pool standings update automatically
-- Bracket winners advance correctly
-
-**Estimate**
-- 5–8 hours
-
----
-
-### T-092 Realtime or refresh strategy
-**Goal:** make public pages feel live.
-
-**Tasks**
-- Decide between realtime subscriptions or short polling
-- Wire schedule/standings/bracket updates
-- Handle stale data gracefully
-
-**Acceptance criteria**
-- Public page reflects updates quickly
-- Manual refresh is not constantly required
-
-**Estimate**
-- 4–6 hours
+### T-092 Realtime or refresh strategy [COMPLETED]
+- [x] Revalidation and realtime DB updates
 
 ---
 
 ## Epic 10 — Announcements and communication
 
-### T-100 Admin announcements tool
-**Goal:** post event updates to public page.
+### T-100 Admin announcements tool [COMPLETED]
+- [x] Event update composer
 
-**Tasks**
-- Create announcement composer
-- Mark urgent vs standard
-- Publish to event page
-- Order latest announcements first
+### T-101 Event status banner [COMPLETED]
+- [x] Prominent urgent notices on public pages
 
-**Acceptance criteria**
-- Admin can post weather or timing updates fast
-- Public event page displays them clearly
-
-**Estimate**
-- 3–5 hours
-
----
-
-### T-101 Event status banner
-**Goal:** display urgent event-wide notices.
-
-**Tasks**
-- Add banner component to event page
-- Show urgent announcements prominently
-- Support statuses like delay / live / complete
-
-**Acceptance criteria**
-- Spectators immediately see major changes
-- Banner styling is obvious on mobile
-
-**Estimate**
-- 2–4 hours
-
----
-
-### T-102 Advertiser / Sponsor management
-**Goal:** manage and display sponsor logos and links.
-
-**Tasks**
-- Create sponsor management interface in admin
-- Add logo upload to Supabase Storage (sponsor-logos bucket)
-- Implement display order control
-- Add sponsors section to public event page
-- Track basic click counts (optional)
-
-**Acceptance criteria**
-- Admin can add/edit/delete sponsors for an event
-- Sponsor logos display correctly on the public event hub
-- Logos link to specified sponsor websites
-
-**Estimate**
-- 4–6 hours
+### T-102 Advertiser / Sponsor management [COMPLETED]
+- [x] Logo management and display ordering
 
 ---
 
 ## Epic 11 — Quality, testing, and polish
 
-### T-110 Validation and error handling
-**Goal:** prevent obvious breakage.
+### T-110 Validation and error handling [PENDING]
+- [ ] Refine edge case error messages
 
-**Tasks**
-- Add server/client validation
-- Add useful error messages
-- Add fallback UI for missing event/division data
+### T-111 Core test suite [PENDING]
+- [ ] Add automated Playwright or Jest tests
 
-**Acceptance criteria**
-- Invalid form submissions fail cleanly
-- Users understand what went wrong
+### T-112 Mobile usability pass [COMPLETED]
+- [x] Verified responsiveness for check-in and scores
 
-**Estimate**
-- 4–6 hours
-
----
-
-### T-111 Core test suite
-**Goal:** cover critical business logic.
-
-**Test targets**
-- registration caps
-- waitlist behavior
-- standings calculation
-- bracket generation
-- score correction logic
-- webhook idempotency
-
-**Acceptance criteria**
-- Critical flows have automated coverage
-- Major logic regressions are caught early
-
-**Estimate**
-- 6–10 hours
-
----
-
-### T-112 Mobile usability pass
-**Goal:** make the product work in the real world.
-
-**Tasks**
-- Test public pages on phone
-- Test admin pages on tablet/phone
-- Increase button sizes
-- Improve contrast/readability for outdoor use
-
-**Acceptance criteria**
-- Schedule/results are easy to use on mobile
-- Score entry and check-in work without zooming around
-
-**Estimate**
-- 4–6 hours
-
----
-
-### T-113 Pilot event simulation
-**Goal:** simulate one full event before going live.
-
-**Tasks**
-- Create test event with 8 teams
-- Run fake registration/payment/check-in
-- Generate pools
-- Enter fake scores
-- Generate bracket
-- Complete event
-- Log every failure/friction point
-
-**Acceptance criteria**
-- Entire event can be run without spreadsheet dependency
-- All blocking issues documented and prioritized
-
-**Estimate**
-- 4–8 hours
-
----
-
-## Nice-to-have tickets after MVP
-
-### N-200 SMS notifications
-- Event reminders
-- Delay notices
-- Court changes
-
-### N-201 QR code event links
-- QR on signage
-- QR per court later
-
-### N-202 Printable admin sheets
-- Check-in sheet
-- Court schedule sheet
-- Pool summary
-
-### N-203 Event templates
-- Reuse previous setup for future tournaments
-
-### N-204 Coupon codes / discounts
-- Promo code support in registration
-
-### N-205 Waitlist auto-promotion
-- Auto-offer spots when withdrawals happen
-
-### N-206 Sponsor blocks
-- Add sponsor graphics/links to event pages
-
-### N-207 Public “find my team” filter
-- Search by team/captain name on event pages
-
----
-
-## Suggested phase order
-
-### Phase 1 — Foundation
-- T-001 to T-013
-
-### Phase 2 — Public and registration
-- T-020 to T-042
-
-### Phase 3 — Admin event control
-- T-050 to T-061
-
-### Phase 4 — Tournament logic
-- T-070 to T-082
-
-### Phase 5 — Live event operation
-- T-090 to T-101
-
-### Phase 6 — QA and launch prep
-- T-110 to T-113
-
----
-
-## Recommended first sprint
-
-If you want momentum, start here:
-- T-001 Project repository setup
-- T-002 Deployment setup
-- T-003 Supabase project setup
-- T-010 Create database schema
-- T-012 Admin authentication
-- T-051 Event create/edit form
-- T-020 Public homepage
-- T-021 Public event detail page
-
-That gets you from “idea” to “I can create and publish an event.”
+### T-113 Pilot event simulation [PENDING]
+- [ ] Run full 8-team simulation script

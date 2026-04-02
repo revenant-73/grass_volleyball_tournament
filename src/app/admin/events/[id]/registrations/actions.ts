@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { TeamStatus } from '@/types'
+import { getStripe } from '@/lib/stripe'
 
 export async function updateTeamStatus(eventId: string, teamId: string, status: TeamStatus) {
   const supabase = await createClient()
@@ -17,6 +18,66 @@ export async function updateTeamStatus(eventId: string, teamId: string, status: 
   }
 
   revalidatePath(`/admin/events/${eventId}/registrations`)
+}
+
+export async function refundTeam(eventId: string, teamId: string) {
+  const supabase = await createClient()
+  const stripe = getStripe()
+
+  // 1. Get payment info
+  const { data: payment, error: paymentError } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('team_id', teamId)
+    .eq('payment_status', 'succeeded')
+    .single()
+
+  if (paymentError || !payment) {
+    throw new Error('No successful payment found for this team')
+  }
+
+  if (!payment.stripe_payment_intent_id) {
+    throw new Error('No Stripe Payment Intent ID found')
+  }
+
+  try {
+    // 2. Trigger Stripe refund
+    await stripe.refunds.create({
+      payment_intent: payment.stripe_payment_intent_id,
+    })
+
+    // 3. Update payment record
+    const { error: updatePaymentError } = await supabase
+      .from('payments')
+      .update({ 
+        payment_status: 'refunded', 
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', payment.id)
+
+    if (updatePaymentError) {
+      console.error('Error updating payment record:', updatePaymentError)
+    }
+
+    // 4. Update team status to withdrawn
+    const { error: updateTeamError } = await supabase
+      .from('teams')
+      .update({ 
+        status: 'withdrawn', 
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', teamId)
+
+    if (updateTeamError) {
+      console.error('Error updating team status:', updateTeamError)
+    }
+
+    revalidatePath(`/admin/events/${eventId}/registrations`)
+    return { success: true }
+  } catch (err: any) {
+    console.error('Stripe refund error:', err)
+    throw new Error(err.message || 'Failed to process refund with Stripe')
+  }
 }
 
 export async function updateTeam(eventId: string, teamId: string, formData: FormData) {
