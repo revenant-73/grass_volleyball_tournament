@@ -34,3 +34,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Deployment & Stability
+
+To ensure stable builds on Vercel, this project follows specific patterns to handle environment variables that are only available at runtime (like `STRIPE_SECRET_KEY`):
+
+*   **Lazy Initialization**: Do not instantiate third-party SDKs at the module level. Use getter functions (e.g., `getStripe()`).
+*   **Force Dynamic**: API routes that rely on runtime secrets should be marked with `export const dynamic = 'force-dynamic'`.
+*   **Local Verification**: Test the build locally without an `.env` file (`npm run build`) to ensure no build-time crashes occur.
