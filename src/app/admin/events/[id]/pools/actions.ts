@@ -71,6 +71,7 @@ export async function generatePoolMatches(eventId: string, divisionId: string) {
 
   for (const pool of pools) {
     const teamIds = pool.assignments.map((a: any) => a.team_id)
+    const courtNumber = (pool.display_order !== undefined ? pool.display_order + 1 : 1).toString()
     
     // Generate all unique pairs
     for (let i = 0; i < teamIds.length; i++) {
@@ -81,7 +82,8 @@ export async function generatePoolMatches(eventId: string, divisionId: string) {
           team_1_id: teamIds[i],
           team_2_id: teamIds[j],
           stage_type: 'pool' as const,
-          status: 'upcoming' as const
+          status: 'upcoming' as const,
+          court: courtNumber
         })
       }
     }
@@ -122,7 +124,7 @@ export async function clearPoolMatches(eventId: string, divisionId: string) {
   revalidatePath(`/admin/events/${eventId}/pools`)
 }
 
-export async function updateMatchScore(eventId: string, matchId: string, team1Score: number, team2Score: number) {
+export async function updateMatchScore(eventId: string, matchId: string, team1Score: number, team2Score: number, court?: string) {
   const supabase = await createClient()
 
   // Get current match to find team IDs
@@ -134,15 +136,21 @@ export async function updateMatchScore(eventId: string, matchId: string, team1Sc
 
   const winner_team_id = team1Score > team2Score ? match?.team_1_id : match?.team_2_id
 
+  const updateData: any = {
+    team_1_score: team1Score,
+    team_2_score: team2Score,
+    status: 'final',
+    winner_team_id: team1Score !== team2Score ? winner_team_id : null,
+    updated_at: new Date().toISOString()
+  }
+
+  if (court !== undefined) {
+    updateData.court = court
+  }
+
   const { error } = await supabase
     .from('matches')
-    .update({
-      team_1_score: team1Score,
-      team_2_score: team2Score,
-      status: 'final',
-      winner_team_id: team1Score !== team2Score ? winner_team_id : null,
-      updated_at: new Date().toISOString()
-    })
+    .update(updateData)
     .eq('id', matchId)
 
   if (error) throw new Error(error.message)

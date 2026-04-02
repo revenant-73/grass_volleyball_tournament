@@ -16,7 +16,7 @@ interface ScoreEntryInterfaceProps {
 export default function ScoreEntryInterface({ eventId, initialMatches, divisions, teams, pools }: ScoreEntryInterfaceProps) {
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [activePoolId, setActivePoolId] = useState('')
-  const [scores, setScores] = useState<Record<string, { t1: number, t2: number }>>({})
+  const [scores, setScores] = useState<Record<string, { t1: number, t2: number, court: string }>>({})
   const [loadingId, setLoadingId] = useState<string | null>(null)
 
   const divisionPools = pools.filter(p => p.division_id === divisionId)
@@ -34,22 +34,42 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
 
   const handleScoreChange = (matchId: string, team: 't1' | 't2', val: string) => {
     const num = parseInt(val) || 0
+    const match = initialMatches.find(m => m.id === matchId)
     setScores(prev => ({
       ...prev,
       [matchId]: {
-        ...(prev[matchId] || { t1: initialMatches.find(m => m.id === matchId)?.team_1_score || 0, t2: initialMatches.find(m => m.id === matchId)?.team_2_score || 0 }),
+        ...(prev[matchId] || { 
+          t1: match?.team_1_score || 0, 
+          t2: match?.team_2_score || 0,
+          court: match?.court || '' 
+        }),
         [team]: num
       }
     }))
   }
 
+  const handleCourtChange = (matchId: string, val: string) => {
+    const match = initialMatches.find(m => m.id === matchId)
+    setScores(prev => ({
+      ...prev,
+      [matchId]: {
+        ...(prev[matchId] || { 
+          t1: match?.team_1_score || 0, 
+          t2: match?.team_2_score || 0,
+          court: match?.court || '' 
+        }),
+        court: val
+      }
+    }))
+  }
+
   const handleSaveScore = async (matchId: string) => {
-    const matchScores = scores[matchId]
-    if (!matchScores) return
+    const matchData = scores[matchId]
+    if (!matchData) return
 
     setLoadingId(matchId)
     try {
-      await updateMatchScore(eventId, matchId, matchScores.t1, matchScores.t2)
+      await updateMatchScore(eventId, matchId, matchData.t1, matchData.t2, matchData.court)
     } catch (err: any) {
       alert(err.message)
     } finally {
@@ -141,7 +161,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
            <h2 className="text-sm font-black text-zinc-400 uppercase tracking-[0.2em] mb-6">Match Results</h2>
            <div className="grid grid-cols-1 gap-4">
               {poolMatches.length > 0 ? poolMatches.map((match) => {
-                 const currentScores = scores[match.id] || { t1: match.team_1_score, t2: match.team_2_score }
+                 const currentData = scores[match.id] || { t1: match.team_1_score, t2: match.team_2_score, court: match.court || '' }
                  const isFinal = match.status === 'final'
                  const isSaving = loadingId === match.id
 
@@ -157,14 +177,14 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
                              <div className="flex items-center gap-2">
                                 <input 
                                   type="number"
-                                  value={currentScores.t1}
+                                  value={currentData.t1}
                                   onChange={(e) => handleScoreChange(match.id, 't1', e.target.value)}
                                   className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-2xl text-center text-2xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
                                 />
                                 <span className="font-black text-zinc-300">vs</span>
                                 <input 
                                   type="number"
-                                  value={currentScores.t2}
+                                  value={currentData.t2}
                                   onChange={(e) => handleScoreChange(match.id, 't2', e.target.value)}
                                   className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-2xl text-center text-2xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
                                 />
@@ -176,25 +196,38 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
                              </div>
                           </div>
 
-                          <div className="flex flex-col gap-2 min-w-[120px]">
+                          <div className="flex flex-row md:flex-col gap-2 min-w-[120px] w-full md:w-auto">
+                             <div className="flex-1 md:flex-none">
+                                <label className="block text-[8px] font-black text-zinc-400 uppercase tracking-widest mb-1 ml-1">Court</label>
+                                <input 
+                                  type="text"
+                                  value={currentData.court}
+                                  placeholder="Court #"
+                                  onChange={(e) => handleCourtChange(match.id, e.target.value)}
+                                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-black focus:border-black dark:focus:border-white transition-all outline-none"
+                                />
+                             </div>
                              <button 
                                onClick={() => handleSaveScore(match.id)}
                                disabled={isSaving}
-                               className={`px-4 py-3 rounded-xl font-black uppercase tracking-tighter text-xs transition-all ${
+                               className={`flex-1 md:flex-none px-4 py-3 rounded-xl font-black uppercase tracking-tighter text-xs transition-all ${
                                  isFinal 
                                    ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black' 
                                    : 'bg-black text-white dark:bg-white dark:text-black shadow-lg hover:scale-105'
                                }`}
                              >
-                                {isSaving ? '...' : isFinal ? 'Edit Result' : 'Save Result'}
+                                {isSaving ? '...' : isFinal ? 'Update' : 'Save'}
                              </button>
-                             {isFinal && (
-                                <p className="text-[10px] font-black text-center text-green-600 uppercase tracking-widest animate-pulse">
-                                   Final
-                                </p>
-                             )}
                           </div>
                        </div>
+                       {isFinal && (
+                          <div className="mt-4 pt-4 border-t border-zinc-50 dark:border-zinc-900 flex justify-center">
+                            <p className="text-[10px] font-black text-green-600 uppercase tracking-widest flex items-center gap-2">
+                               <span className="w-1 h-1 bg-green-600 rounded-full animate-pulse" />
+                               Final Result Recorded
+                            </p>
+                          </div>
+                       )}
                     </div>
                  )
               }) : (

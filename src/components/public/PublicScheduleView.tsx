@@ -17,6 +17,26 @@ export default function PublicScheduleView({ divisions, initialMatches }: Public
   const poolMatches = filteredMatches.filter(m => m.stage_type === 'pool')
   const bracketMatches = filteredMatches.filter(m => m.stage_type === 'bracket')
 
+  // Group pool matches by pool name
+  const matchesByPool: Record<string, Match[]> = {}
+  poolMatches.forEach(match => {
+    const poolName = match.pool?.name || 'Unknown Pool'
+    if (!matchesByPool[poolName]) {
+      matchesByPool[poolName] = []
+    }
+    matchesByPool[poolName].push(match)
+  })
+
+  // Sort pools alphabetically and matches by creation/time
+  const sortedPoolNames = Object.keys(matchesByPool).sort()
+  sortedPoolNames.forEach(name => {
+    matchesByPool[name].sort((a, b) => {
+      const timeA = a.scheduled_time || a.created_at || ''
+      const timeB = b.scheduled_time || b.created_at || ''
+      return timeA.localeCompare(timeB)
+    })
+  })
+
   return (
     <div className="space-y-12 pb-24">
       {/* Division Selector */}
@@ -41,22 +61,40 @@ export default function PublicScheduleView({ divisions, initialMatches }: Public
             <section className="space-y-6">
                <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em]">Elimination Bracket</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {bracketMatches.map(match => (
+                  {bracketMatches.sort((a, b) => {
+                    if (a.bracket_round !== b.bracket_round) return (a.bracket_round || 0) - (b.bracket_round || 0)
+                    return (a.round_number || 0) - (b.round_number || 0)
+                  }).map(match => (
                      <MatchCard key={match.id} match={match} />
                   ))}
                </div>
             </section>
          )}
 
-         <section className="space-y-6">
+         <section className="space-y-8">
             <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em]">Pool Play</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               {poolMatches.length > 0 ? poolMatches.map(match => (
-                  <MatchCard key={match.id} match={match} />
-               )) : (
-                  <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs italic">No matches scheduled yet.</p>
-               )}
-            </div>
+            
+            {sortedPoolNames.length > 0 ? (
+              <div className="space-y-12">
+                {sortedPoolNames.map(poolName => (
+                  <div key={poolName} className="space-y-4">
+                    <h3 className="text-lg font-black text-black dark:text-white uppercase tracking-tighter flex items-center gap-3">
+                      <span className="w-8 h-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center text-xs">
+                        {poolName.replace('Pool ', '')}
+                      </span>
+                      {poolName}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {matchesByPool[poolName].map(match => (
+                        <MatchCard key={match.id} match={match} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+               <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs italic">No matches scheduled yet.</p>
+            )}
          </section>
       </div>
     </div>
@@ -85,16 +123,25 @@ function MatchCard({ match }: { match: Match }) {
              </div>
           </div>
           
-          <div className="flex flex-col items-center justify-center pl-6 border-l border-zinc-50 dark:border-zinc-900 min-w-[80px]">
-             {isFinal ? (
-                <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Final</span>
-             ) : isLive ? (
-                <span className="text-[10px] font-black text-red-600 uppercase tracking-widest animate-pulse">Live</span>
-             ) : (
-                <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Upcoming</span>
-             )}
-             {match.pool && (
-                <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest mt-1">{match.pool.name}</p>
+          <div className="flex flex-col items-center justify-center pl-6 border-l border-zinc-100 dark:border-zinc-900 min-w-[100px]">
+             <div className="flex flex-col items-center gap-1">
+                {isFinal ? (
+                   <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Final</span>
+                ) : isLive ? (
+                   <span className="text-[10px] font-black text-red-600 uppercase tracking-widest animate-pulse">Live</span>
+                ) : (
+                   <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Upcoming</span>
+                )}
+                
+                {match.court && (
+                  <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[9px] font-black text-zinc-500 uppercase tracking-widest">
+                    Court {match.court}
+                  </span>
+                )}
+             </div>
+             
+             {match.stage_type === 'bracket' && match.pool && (
+                <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest mt-2">{match.pool.name}</p>
              )}
           </div>
        </div>
