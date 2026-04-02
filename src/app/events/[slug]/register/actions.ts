@@ -24,6 +24,20 @@ export async function registerTeam(eventId: string, formData: any) {
     waiver_accepted
   } = formData
 
+  // Basic Validation
+  if (!division_id || !team_name || !captain_name || !captain_email || !partner_name) {
+    throw new Error('All required fields must be filled out')
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(captain_email)) {
+    throw new Error('Invalid captain email address')
+  }
+
+  if (partner_email && !emailRegex.test(partner_email)) {
+    throw new Error('Invalid partner email address')
+  }
+
   if (!waiver_accepted) {
     throw new Error('Waiver must be accepted')
   }
@@ -37,6 +51,30 @@ export async function registerTeam(eventId: string, formData: any) {
 
   if (divError || !division) {
     throw new Error('Division not found')
+  }
+
+  // 1b. Check for duplicate team name in this division
+  const { data: existingTeam } = await supabase
+    .from('teams')
+    .select('id')
+    .eq('division_id', division_id)
+    .eq('team_name', team_name)
+    .maybeSingle()
+
+  if (existingTeam) {
+    throw new Error(`The team name "${team_name}" is already taken in this division.`)
+  }
+
+  // 1c. Check if captain is already registered in this division
+  const { data: existingCaptain } = await supabase
+    .from('teams')
+    .select('id')
+    .eq('division_id', division_id)
+    .eq('captain_email', captain_email)
+    .maybeSingle()
+
+  if (existingCaptain) {
+    throw new Error(`A captain with the email ${captain_email} is already registered in this division.`)
   }
 
   const teamCount = division.teams?.[0]?.count || 0
