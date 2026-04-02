@@ -253,12 +253,24 @@ export default async function PublicEventDetailPage({
              </div>
 
              <div className="grid grid-cols-1 gap-4">
-                <button disabled className="w-full py-5 border-2 border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-700 font-black rounded-2xl uppercase tracking-tighter opacity-50 cursor-not-allowed">
+                <Link 
+                  href={`/events/${event.slug}/schedule`}
+                  className="w-full py-5 bg-white dark:bg-zinc-950 border-2 border-zinc-200 dark:border-zinc-800 text-black dark:text-white font-black rounded-2xl uppercase tracking-tighter text-center hover:border-black dark:hover:border-white transition-all shadow-sm"
+                >
                    Event Schedule
-                </button>
-                <button disabled className="w-full py-5 border-2 border-zinc-100 dark:border-zinc-800 text-zinc-300 dark:text-zinc-700 font-black rounded-2xl uppercase tracking-tighter opacity-50 cursor-not-allowed">
+                </Link>
+                <Link 
+                  href={`/events/${event.slug}/standings`}
+                  className="w-full py-5 bg-white dark:bg-zinc-950 border-2 border-zinc-200 dark:border-zinc-800 text-black dark:text-white font-black rounded-2xl uppercase tracking-tighter text-center hover:border-black dark:hover:border-white transition-all shadow-sm"
+                >
                    Standings / Results
-                </button>
+                </Link>
+                <Link 
+                  href={`/events/${event.slug}/bracket`}
+                  className="w-full py-5 bg-white dark:bg-zinc-950 border-2 border-zinc-200 dark:border-zinc-800 text-black dark:text-white font-black rounded-2xl uppercase tracking-tighter text-center hover:border-black dark:hover:border-white transition-all shadow-sm"
+                >
+                   Elimination Bracket
+                </Link>
              </div>
           </div>
         </div>

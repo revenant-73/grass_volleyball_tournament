@@ -167,14 +167,17 @@
 
 ## Epic 11 — Quality, testing, and polish
 
-### T-110 Validation and error handling [PENDING]
-- [ ] Refine edge case error messages
+### T-110 Validation and error handling [COMPLETED]
+- [x] Refine edge case error messages
+- [x] Added server-side registration validation (duplicates/format)
 
-### T-111 Core test suite [PENDING]
-- [ ] Add automated Playwright or Jest tests
+### T-111 Core test suite [COMPLETED]
+- [x] Setup Playwright E2E infrastructure
+- [x] Added homepage and registration flow tests
 
 ### T-112 Mobile usability pass [COMPLETED]
 - [x] Verified responsiveness for check-in and scores
 
-### T-113 Pilot event simulation [PENDING]
-- [ ] Run full 8-team simulation script
+### T-113 Pilot event simulation [COMPLETED]
+- [x] Run full 8-team simulation script
+- [x] Verified pool generation, standings, and bracket advancement

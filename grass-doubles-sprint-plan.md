@@ -133,17 +133,18 @@ Target: **usable MVP by end of Sprint 5**, buffer/polish in Sprint 6.
 
 ---
 
-## Sprint 6 — Hardening + launch prep [IN PROGRESS]
+## Sprint 6 — Hardening + launch prep [COMPLETED]
 **Goal:** make it stable enough for real use.
 
 ### Tickets
-- [ ] T-110 Validation and error handling
-- [ ] T-111 Core test suite
+- [x] T-110 Validation and error handling
+- [x] T-111 Core test suite
 - [x] T-112 Mobile usability pass
-- [ ] T-113 Pilot event simulation
+- [x] T-113 Pilot event simulation
 
 ### Deliverable
 - [x] Cleaner UX
-- [ ] Fewer silent failures
-- [ ] Tested event simulation
-- [ ] Launch checklist
+- [x] Fewer silent failures
+- [x] Tested event simulation
+- [x] Launch checklist
+- [x] E2E Playwright infrastructure
