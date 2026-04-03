@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import Header from '@/components/public/Header'
 import { Event } from '@/types'
 
 export default async function Home() {
@@ -22,9 +21,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-50 font-sans dark:bg-black">
-      <Header />
-      
-      <main className="flex-1 pt-16">
+      <main className="flex-1">
         {/* Hero Section */}
         <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white dark:bg-black">
           <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20">

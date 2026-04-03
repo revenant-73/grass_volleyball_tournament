@@ -20,15 +20,9 @@ export default async function PublicEventsPage() {
   const pastEvents = events?.filter(e => new Date(e.date_start) < new Date(new Date().setHours(0,0,0,0))) || []
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12">
+    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12 pt-24 sm:pt-32">
       <div className="max-w-6xl mx-auto">
         <header className="mb-16 text-center lg:text-left">
-          <Link href="/" className="inline-flex items-center text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-white transition-colors mb-8 group">
-            <svg className="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Home
-          </Link>
           <h1 className="text-5xl font-black text-black dark:text-white uppercase tracking-tighter mb-4">
             Tournament Schedule
           </h1>
