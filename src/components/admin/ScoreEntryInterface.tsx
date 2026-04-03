@@ -77,16 +77,18 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
   }
 
   const handleSaveScore = async (matchId: string) => {
-    const m = scores[matchId]
     const match = initialMatches.find(mm => mm.id === matchId)
-    const data = m || {
-      s1_1: match?.team_1_score || 0, 
-      s1_2: match?.team_2_score || 0,
-      s2_1: match?.team_1_score_2 || 0,
-      s2_2: match?.team_2_score_2 || 0,
-      s3_1: match?.team_1_score_3 || 0,
-      s3_2: match?.team_2_score_3 || 0,
-      court: match?.court || ''
+    if (!match) return
+
+    const m = scores[matchId]
+    const data = {
+      s1_1: m ? m.s1_1 : (match.team_1_score || 0), 
+      s1_2: m ? m.s1_2 : (match.team_2_score || 0),
+      s2_1: m ? m.s2_1 : (match.team_1_score_2 || 0),
+      s2_2: m ? m.s2_2 : (match.team_2_score_2 || 0),
+      s3_1: m ? m.s3_1 : (match.team_1_score_3 || 0),
+      s3_2: m ? m.s3_2 : (match.team_2_score_3 || 0),
+      court: m ? m.court : (match.court || '')
     }
 
     setLoadingId(matchId)
@@ -99,6 +101,12 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
         data.s3_1, data.s3_2,
         data.court
       )
+      // Clear local score state for this match after successful save to favor fresh server data
+      setScores(prev => {
+        const newScores = { ...prev }
+        delete newScores[matchId]
+        return newScores
+      })
     } catch (err: any) {
       alert(err.message)
     } finally {
@@ -229,6 +237,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
                                  </div>
                                  <div className="flex items-center gap-3">
                                    <input 
+                                     key={`${match.id}-s${setNum}-t1`}
                                      type="number"
                                      value={(currentData as any)[`s${setNum}_1`]}
                                      onChange={(e) => handleScoreChange(match.id, setNum as any, 1, e.target.value)}
@@ -236,6 +245,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
                                    />
                                    <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-800" />
                                    <input 
+                                     key={`${match.id}-s${setNum}-t2`}
                                      type="number"
                                      value={(currentData as any)[`s${setNum}_2`]}
                                      onChange={(e) => handleScoreChange(match.id, setNum as any, 2, e.target.value)}
