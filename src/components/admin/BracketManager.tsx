@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Match, Team, Division } from '@/types'
 import { generateBracket, updateBracketScore, toggleBracketPublish } from '@/app/admin/events/[id]/bracket/actions'
 
@@ -24,6 +24,32 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
   const isPublished = currentDivision?.bracket_published || false
   
   const rounds = Array.from(new Set(divisionMatches.map(m => m.bracket_round))).sort((a,b) => (a||0) - (b||0))
+
+  // Sync scores state when initialMatches updates (props from server)
+  useEffect(() => {
+    setScores(prev => {
+      const newScores = { ...prev }
+      let changed = false
+      Object.keys(newScores).forEach(matchId => {
+        const match = initialMatches.find(m => m.id === matchId)
+        if (match) {
+          const s = newScores[matchId]
+          if (
+            s.s1_1 === (match.team_1_score ?? 0) &&
+            s.s1_2 === (match.team_2_score ?? 0) &&
+            s.s2_1 === (match.team_1_score_2 ?? 0) &&
+            s.s2_2 === (match.team_2_score_2 ?? 0) &&
+            s.s3_1 === (match.team_1_score_3 ?? 0) &&
+            s.s3_2 === (match.team_2_score_3 ?? 0)
+          ) {
+            delete newScores[matchId]
+            changed = true
+          }
+        }
+      })
+      return changed ? newScores : prev
+    })
+  }, [initialMatches])
 
   const handleTogglePublish = async () => {
     setLoading(true)
@@ -185,7 +211,7 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
                                       <div className="flex gap-2">
                                         {[1, 2, 3].map(s => (
                                           <input 
-                                            key={s}
+                                            key={`${match.id}-s${s}-t1`}
                                             type="number"
                                             value={(currentScores as any)[`s${s}_1`]}
                                             onChange={(e) => handleScoreChange(match.id, s as any, 1, e.target.value)}
@@ -202,7 +228,7 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
                                       <div className="flex gap-2">
                                         {[1, 2, 3].map(s => (
                                           <input 
-                                            key={s}
+                                            key={`${match.id}-s${s}-t2`}
                                             type="number"
                                             value={(currentScores as any)[`s${s}_2`]}
                                             onChange={(e) => handleScoreChange(match.id, s as any, 2, e.target.value)}

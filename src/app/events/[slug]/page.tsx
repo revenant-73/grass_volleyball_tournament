@@ -34,7 +34,7 @@ export default async function PublicEventDetailPage({
   const upcomingDate = new Date(event.date_start) >= new Date(new Date().setHours(0,0,0,0))
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12">
+    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12 pt-24 lg:pt-32">
       <div className="max-w-6xl mx-auto">
         {urgentAnnouncement && (
           <div className="mb-8 p-6 bg-red-600 text-white rounded-[2rem] shadow-xl animate-in fade-in slide-in-from-top-4 duration-700">
@@ -125,7 +125,7 @@ export default async function PublicEventDetailPage({
                 <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Latest Updates</h2>
                 <div className="space-y-4">
                   {regularAnnouncements.map((announcement: any) => (
-                    <div key={announcement.id} className="p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm">
+                    <div key={announcement.id} className="p-6 bg-card border-border rounded-3xl shadow-sm">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-black text-black dark:text-white uppercase tracking-tight">{announcement.title}</h3>
                         <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">

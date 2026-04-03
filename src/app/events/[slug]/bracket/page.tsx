@@ -42,7 +42,7 @@ export default async function PublicBracketPage({
     .order('round_number', { ascending: true })
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12">
+    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8 lg:p-12 pt-24 lg:pt-32">
       <div className="max-w-6xl mx-auto">
         <TournamentNav slug={slug} eventName={event.name} />
         

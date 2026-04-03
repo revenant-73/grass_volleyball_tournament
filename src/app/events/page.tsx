@@ -37,7 +37,7 @@ export default async function PublicEventsPage() {
               <Link 
                 key={event.id} 
                 href={`/events/${event.slug}`}
-                className="group bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col"
+                className="group bg-card border-border rounded-3xl shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col"
               >
                 <div className="relative h-48 w-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
                   {event.banner_url ? (

@@ -20,10 +20,10 @@ export default async function Home() {
   const upcomingEvents = events?.filter(e => new Date(e.date_start) >= new Date(new Date().setHours(0,0,0,0))) || []
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 font-sans dark:bg-black">
+    <div className="flex flex-col min-h-screen bg-zinc-50 font-sans dark:bg-black pt-16">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white dark:bg-black">
+        <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-white dark:bg-black py-20">
           <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-50 dark:to-black" />
             <div className="h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -67,7 +67,7 @@ export default async function Home() {
                 <Link 
                   key={event.id} 
                   href={`/events/${event.slug}`}
-                  className="group bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col"
+                  className="group bg-card border-border rounded-3xl shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col"
                 >
                   <div className="relative h-48 w-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
                     {event.banner_url ? (

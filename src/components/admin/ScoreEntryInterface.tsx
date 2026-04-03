@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Match, Team, Division, Pool } from '@/types'
 import { calculateStandings } from '@/lib/tournament-logic'
 import { updateMatchScore } from '@/app/admin/events/[id]/pools/actions'
@@ -23,15 +23,44 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
     court: string 
   }>>({})
   const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [activePoolId, setActivePoolId] = useState('')
 
-  const divisionPools = pools.filter(p => p.division_id === divisionId)
-  
   // Set default pool if not set
-  if (divisionPools.length > 0 && !activePoolId) {
-    setActivePoolId(divisionPools[0].id)
-  } else if (divisionPools.length > 0 && !divisionPools.find(p => p.id === activePoolId)) {
-    setActivePoolId(divisionPools[0].id)
-  }
+  useEffect(() => {
+    if (divisionPools.length > 0 && !activePoolId) {
+      setActivePoolId(divisionPools[0].id)
+    } else if (divisionPools.length > 0 && !divisionPools.find(p => p.id === activePoolId)) {
+      setActivePoolId(divisionPools[0].id)
+    }
+  }, [divisionId, divisionPools, activePoolId])
+
+  // Sync scores state when initialMatches updates (props from server)
+  useEffect(() => {
+    setScores(prev => {
+      const newScores = { ...prev }
+      let changed = false
+      Object.keys(newScores).forEach(matchId => {
+        const match = initialMatches.find(m => m.id === matchId)
+        if (match) {
+          const s = newScores[matchId]
+          // If the server data now matches our local state, we can clear the local state
+          if (
+            s.s1_1 === (match.team_1_score ?? 0) &&
+            s.s1_2 === (match.team_2_score ?? 0) &&
+            s.s2_1 === (match.team_1_score_2 ?? 0) &&
+            s.s2_2 === (match.team_2_score_2 ?? 0) &&
+            s.s3_1 === (match.team_1_score_3 ?? 0) &&
+            s.s3_2 === (match.team_2_score_3 ?? 0) &&
+            s.court === (match.court || '')
+          ) {
+            delete newScores[matchId]
+            changed = true
+          }
+        }
+      })
+      return changed ? newScores : prev
+    })
+  }, [initialMatches])
 
   const poolMatches = initialMatches.filter(m => m.pool_id === activePoolId)
   const poolTeams = teams.filter(t => t.division_id === divisionId && initialMatches.some(m => m.pool_id === activePoolId && (m.team_1_id === t.id || m.team_2_id === t.id)))
@@ -101,12 +130,6 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
         data.s3_1, data.s3_2,
         data.court
       )
-      // Clear local score state for this match after successful save to favor fresh server data
-      setScores(prev => {
-        const newScores = { ...prev }
-        delete newScores[matchId]
-        return newScores
-      })
     } catch (err: any) {
       alert(err.message)
     } finally {
