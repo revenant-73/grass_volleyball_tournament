@@ -32,13 +32,21 @@ const navItems = [
   )},
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+  onNavClick?: () => void
+}
+
+export default function Sidebar({ onNavClick }: SidebarProps) {
   const pathname = usePathname()
 
   return (
-    <div className="flex flex-col w-64 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 h-screen sticky top-0 overflow-y-auto">
-      <div className="flex items-center justify-center h-20 border-b border-zinc-100 dark:border-zinc-900 px-6">
-        <Link href="/admin" className="text-xl font-black text-black dark:text-white uppercase tracking-tighter">
+    <div className="flex flex-col w-64 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 h-full overflow-y-auto">
+      <div className="flex items-center justify-center h-20 border-b border-zinc-100 dark:border-zinc-900 px-6 shrink-0">
+        <Link 
+          href="/admin" 
+          onClick={onNavClick}
+          className="text-xl font-black text-black dark:text-white uppercase tracking-tighter"
+        >
           Tournament <span className="text-zinc-400">Hub</span>
         </Link>
       </div>
@@ -50,6 +58,7 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onNavClick}
               className={`flex items-center px-4 py-3 text-sm font-bold rounded-lg transition-all ${
                 isActive
                   ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg shadow-zinc-200 dark:shadow-none'
@@ -62,6 +71,7 @@ export default function Sidebar() {
           )
         })}
       </nav>
+
 
       <div className="p-4 border-t border-zinc-100 dark:border-zinc-900">
         <form action="/auth/signout" method="POST">

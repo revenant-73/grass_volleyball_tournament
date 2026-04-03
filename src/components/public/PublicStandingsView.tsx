@@ -67,28 +67,28 @@ export default function PublicStandingsView({
                       <thead>
                         <tr className="border-b border-zinc-100 dark:border-zinc-800">
                           <th className="text-left py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">Team</th>
-                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">W-L</th>
+                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">M W-L</th>
+                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">S W-L</th>
                           <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">Diff</th>
-                          <th className="text-center py-3 font-black text-[10px] uppercase tracking-widest text-zinc-400">Pts For</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                         {standings.map((stat, idx) => (
                           <tr key={stat.team.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
-                            <td className="py-4">
-                              <div className="flex items-center gap-3">
-                                <span className="text-zinc-300 w-4 font-black text-[10px]">{idx + 1}</span>
-                                <span className="font-bold text-black dark:text-white uppercase tracking-tight">{stat.team.team_name}</span>
+                            <td className="py-4 pr-4">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-zinc-300 w-4 font-black text-[10px] shrink-0">{idx + 1}</span>
+                                <span className="font-bold text-black dark:text-white uppercase tracking-tight truncate">{stat.team.team_name}</span>
                               </div>
                             </td>
-                            <td className="text-center py-4 font-black text-black dark:text-white">
+                            <td className="text-center py-4 font-black text-black dark:text-white tabular-nums">
                               {stat.wins}-{stat.losses}
                             </td>
-                            <td className={`text-center py-4 font-black ${stat.pointDiff > 0 ? 'text-emerald-600' : stat.pointDiff < 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
-                              {stat.pointDiff > 0 ? `+${stat.pointDiff}` : stat.pointDiff}
+                            <td className="text-center py-4 font-black text-zinc-500 tabular-nums">
+                              {stat.setsWon}-{stat.setsLost}
                             </td>
-                            <td className="text-center py-4 text-zinc-500 font-bold">
-                              {stat.pointsFor}
+                            <td className={`text-center py-4 font-black tabular-nums ${stat.pointDiff > 0 ? 'text-emerald-600' : stat.pointDiff < 0 ? 'text-rose-600' : 'text-zinc-400'}`}>
+                              {stat.pointDiff > 0 ? `+${stat.pointDiff}` : stat.pointDiff}
                             </td>
                           </tr>
                         ))}

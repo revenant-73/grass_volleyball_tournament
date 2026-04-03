@@ -4,6 +4,8 @@ export interface TeamStanding {
   team: Team
   wins: number
   losses: number
+  setsWon: number
+  setsLost: number
   pointsFor: number
   pointsAgainst: number
   pointDiff: number
@@ -19,6 +21,8 @@ export function calculateStandings(teams: Team[], matches: Match[]): TeamStandin
       team,
       wins: 0,
       losses: 0,
+      setsWon: 0,
+      setsLost: 0,
       pointsFor: 0,
       pointsAgainst: 0,
       pointDiff: 0,
@@ -33,15 +37,26 @@ export function calculateStandings(teams: Team[], matches: Match[]): TeamStandin
 
     if (!t1 || !t2) return
 
-    t1.pointsFor += match.team_1_score
-    t1.pointsAgainst += match.team_2_score
-    t2.pointsFor += match.team_2_score
-    t2.pointsAgainst += match.team_1_score
+    // Points from all 3 sets
+    const matchT1Points = (match.team_1_score || 0) + (match.team_1_score_2 || 0) + (match.team_1_score_3 || 0)
+    const matchT2Points = (match.team_2_score || 0) + (match.team_2_score_2 || 0) + (match.team_2_score_3 || 0)
 
-    if (match.team_1_score > match.team_2_score) {
+    t1.pointsFor += matchT1Points
+    t1.pointsAgainst += matchT2Points
+    t2.pointsFor += matchT2Points
+    t2.pointsAgainst += matchT1Points
+
+    // Sets Won
+    t1.setsWon += (match.sets_won_1 || 0)
+    t1.setsLost += (match.sets_won_2 || 0)
+    t2.setsWon += (match.sets_won_2 || 0)
+    t2.setsLost += (match.sets_won_1 || 0)
+
+    // Match Wins
+    if (match.sets_won_1 > match.sets_won_2) {
       t1.wins += 1
       t2.losses += 1
-    } else if (match.team_2_score > match.team_1_score) {
+    } else if (match.sets_won_2 > match.sets_won_1) {
       t2.wins += 1
       t1.losses += 1
     }
@@ -57,9 +72,14 @@ export function calculateStandings(teams: Team[], matches: Match[]): TeamStandin
     }
   })
 
-  // Sort by Wins -> Point Diff -> Points For
+  // Sort by Wins -> Set Diff -> Point Diff -> Points For
   return standings.sort((a, b) => {
     if (b.wins !== a.wins) return b.wins - a.wins
+    
+    const aSetDiff = a.setsWon - a.setsLost
+    const bSetDiff = b.setsWon - b.setsLost
+    if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff
+    
     if (b.pointDiff !== a.pointDiff) return b.pointDiff - a.pointDiff
     return b.pointsFor - a.pointsFor
   })
@@ -72,6 +92,11 @@ export function rankTeamsAcrossPools(allStandings: TeamStanding[]): Team[] {
   return [...allStandings]
     .sort((a, b) => {
       if (b.wins !== a.wins) return b.wins - a.wins
+      
+      const aSetDiff = a.setsWon - a.setsLost
+      const bSetDiff = b.setsWon - b.setsLost
+      if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff
+      
       if (b.pointDiff !== a.pointDiff) return b.pointDiff - a.pointDiff
       return b.pointsFor - a.pointsFor
     })

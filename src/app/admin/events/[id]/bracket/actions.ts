@@ -39,7 +39,13 @@ export async function generateBracket(eventId: string, divisionId: string, teams
   revalidatePath(`/admin/events/${eventId}/bracket`)
 }
 
-export async function updateBracketScore(eventId: string, matchId: string, t1Score: number, t2Score: number) {
+export async function updateBracketScore(
+  eventId: string, 
+  matchId: string, 
+  s1_1: number, s1_2: number, 
+  s2_1: number, s2_2: number, 
+  s3_1: number, s3_2: number
+) {
   const supabase = await createClient()
 
   // Get current match
@@ -51,14 +57,23 @@ export async function updateBracketScore(eventId: string, matchId: string, t1Sco
 
   if (!match) throw new Error('Match not found')
 
-  const winnerId = t1Score > t2Score ? match.team_1_id : match.team_2_id
+  const sets_won_1 = (s1_1 > s1_2 ? 1 : 0) + (s2_1 > s2_2 ? 1 : 0) + (s3_1 > s3_2 ? 1 : 0)
+  const sets_won_2 = (s1_2 > s1_1 ? 1 : 0) + (s2_2 > s2_1 ? 1 : 0) + (s3_2 > s3_1 ? 1 : 0)
+
+  const winnerId = sets_won_1 > sets_won_2 ? match.team_1_id : (sets_won_2 > sets_won_1 ? match.team_2_id : null)
 
   // 1. Update this match
   const { error: updateError } = await supabase
     .from('matches')
     .update({
-      team_1_score: t1Score,
-      team_2_score: t2Score,
+      team_1_score: s1_1,
+      team_2_score: s1_2,
+      team_1_score_2: s2_1,
+      team_2_score_2: s2_2,
+      team_1_score_3: s3_1,
+      team_2_score_3: s3_2,
+      sets_won_1,
+      sets_won_2,
       status: 'final',
       winner_team_id: winnerId,
       updated_at: new Date().toISOString()

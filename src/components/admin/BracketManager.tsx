@@ -13,7 +13,11 @@ interface BracketManagerProps {
 export default function BracketManager({ eventId, initialMatches, divisions }: BracketManagerProps) {
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [loading, setLoading] = useState(false)
-  const [scores, setScores] = useState<Record<string, { t1: number, t2: number }>>({})
+  const [scores, setScores] = useState<Record<string, { 
+    s1_1: number, s1_2: number,
+    s2_1: number, s2_2: number,
+    s3_1: number, s3_2: number
+  }>>({})
 
   const divisionMatches = initialMatches.filter(m => m.division_id === divisionId)
   const currentDivision = divisions.find(d => d.id === divisionId)
@@ -43,24 +47,46 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
     }
   }
 
-  const handleScoreChange = (matchId: string, team: 't1' | 't2', val: string) => {
+  const handleScoreChange = (matchId: string, set: 1 | 2 | 3, team: 1 | 2, val: string) => {
     const num = parseInt(val) || 0
+    const match = initialMatches.find(m => m.id === matchId)
     setScores(prev => ({
       ...prev,
       [matchId]: {
-        ...(prev[matchId] || { t1: initialMatches.find(m => m.id === matchId)?.team_1_score || 0, t2: initialMatches.find(m => m.id === matchId)?.team_2_score || 0 }),
-        [team]: num
+        ...(prev[matchId] || { 
+          s1_1: match?.team_1_score || 0, 
+          s1_2: match?.team_2_score || 0,
+          s2_1: match?.team_1_score_2 || 0,
+          s2_2: match?.team_2_score_2 || 0,
+          s3_1: match?.team_1_score_3 || 0,
+          s3_2: match?.team_2_score_3 || 0
+        }),
+        [`s${set}_${team}`]: num
       }
     }))
   }
 
   const handleSaveScore = async (matchId: string) => {
-    const matchScores = scores[matchId]
-    if (!matchScores) return
+    const m = scores[matchId]
+    const match = initialMatches.find(mm => mm.id === matchId)
+    const data = m || {
+      s1_1: match?.team_1_score || 0, 
+      s1_2: match?.team_2_score || 0,
+      s2_1: match?.team_1_score_2 || 0,
+      s2_2: match?.team_2_score_2 || 0,
+      s3_1: match?.team_1_score_3 || 0,
+      s3_2: match?.team_2_score_3 || 0
+    }
 
     setLoading(true)
     try {
-      await updateBracketScore(eventId, matchId, matchScores.t1, matchScores.t2)
+      await updateBracketScore(
+        eventId, 
+        matchId, 
+        data.s1_1, data.s1_2,
+        data.s2_1, data.s2_2,
+        data.s3_1, data.s3_2
+      )
     } catch (err: any) {
       alert(err.message)
     } finally {
@@ -142,39 +168,56 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
                     </h3>
                     <div className="space-y-4">
                        {divisionMatches.filter(m => m.bracket_round === round).map(match => {
-                          const currentScores = scores[match.id] || { t1: match.team_1_score, t2: match.team_2_score }
+                          const currentScores = scores[match.id] || { 
+                            s1_1: match.team_1_score, s1_2: match.team_2_score,
+                            s2_1: match.team_1_score_2, s2_2: match.team_2_score_2,
+                            s3_1: match.team_1_score_3, s3_2: match.team_2_score_3
+                          }
                           const isFinal = match.status === 'final'
 
                           return (
-                             <div key={match.id} className="p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm space-y-4">
-                                <div className="space-y-3">
+                             <div key={match.id} className="p-4 md:p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm space-y-6">
+                                <div className="space-y-4">
                                    <div className="flex items-center justify-between gap-4">
-                                      <p className={`font-black uppercase tracking-tight text-sm truncate ${match.winner_team_id === match.team_1_id && isFinal ? 'text-green-600' : 'text-zinc-400'}`}>
+                                      <p className={`font-black uppercase tracking-tight text-[10px] md:text-xs truncate flex-1 ${match.winner_team_id === match.team_1_id && isFinal ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
                                          {match.team_1?.team_name || 'TBD'}
                                       </p>
-                                      <input 
-                                        type="number"
-                                        value={currentScores.t1}
-                                        onChange={(e) => handleScoreChange(match.id, 't1', e.target.value)}
-                                        className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl text-center font-black outline-none"
-                                      />
+                                      <div className="flex gap-2">
+                                        {[1, 2, 3].map(s => (
+                                          <input 
+                                            key={s}
+                                            type="number"
+                                            value={(currentScores as any)[`s${s}_1`]}
+                                            onChange={(e) => handleScoreChange(match.id, s as any, 1, e.target.value)}
+                                            placeholder="-"
+                                            className="w-8 md:w-10 h-8 md:h-10 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-center text-xs font-black outline-none focus:border-black dark:focus:border-white transition-all"
+                                          />
+                                        ))}
+                                      </div>
                                    </div>
                                    <div className="flex items-center justify-between gap-4">
-                                      <p className={`font-black uppercase tracking-tight text-sm truncate ${match.winner_team_id === match.team_2_id && isFinal ? 'text-green-600' : 'text-zinc-400'}`}>
+                                      <p className={`font-black uppercase tracking-tight text-[10px] md:text-xs truncate flex-1 ${match.winner_team_id === match.team_2_id && isFinal ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
                                          {match.team_2?.team_name || 'TBD'}
                                       </p>
-                                      <input 
-                                        type="number"
-                                        value={currentScores.t2}
-                                        onChange={(e) => handleScoreChange(match.id, 't2', e.target.value)}
-                                        className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl text-center font-black outline-none"
-                                      />
+                                      <div className="flex gap-2">
+                                        {[1, 2, 3].map(s => (
+                                          <input 
+                                            key={s}
+                                            type="number"
+                                            value={(currentScores as any)[`s${s}_2`]}
+                                            onChange={(e) => handleScoreChange(match.id, s as any, 2, e.target.value)}
+                                            placeholder="-"
+                                            className="w-8 md:w-10 h-8 md:h-10 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-center text-xs font-black outline-none focus:border-black dark:focus:border-white transition-all"
+                                          />
+                                        ))}
+                                      </div>
                                    </div>
                                 </div>
                                 <button 
                                   onClick={() => handleSaveScore(match.id)}
-                                  className={`w-full py-3 rounded-xl font-black uppercase tracking-tighter text-[10px] transition-all ${
-                                    isFinal ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400' : 'bg-black text-white dark:bg-white dark:text-black'
+                                  disabled={loading}
+                                  className={`w-full py-2.5 rounded-xl font-black uppercase tracking-widest text-[9px] md:text-[10px] transition-all ${
+                                    isFinal ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black' : 'bg-black text-white dark:bg-white dark:text-black shadow-lg shadow-zinc-200 dark:shadow-none active:scale-95'
                                   }`}
                                 >
                                    {isFinal ? 'Update Result' : 'Save Result'}

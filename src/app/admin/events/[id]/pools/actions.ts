@@ -124,7 +124,14 @@ export async function clearPoolMatches(eventId: string, divisionId: string) {
   revalidatePath(`/admin/events/${eventId}/pools`)
 }
 
-export async function updateMatchScore(eventId: string, matchId: string, team1Score: number, team2Score: number, court?: string) {
+export async function updateMatchScore(
+  eventId: string, 
+  matchId: string, 
+  s1_1: number, s1_2: number, 
+  s2_1: number, s2_2: number, 
+  s3_1: number, s3_2: number,
+  court?: string
+) {
   const supabase = await createClient()
 
   // Get current match to find team IDs
@@ -134,13 +141,22 @@ export async function updateMatchScore(eventId: string, matchId: string, team1Sc
     .eq('id', matchId)
     .single()
 
-  const winner_team_id = team1Score > team2Score ? match?.team_1_id : match?.team_2_id
+  const sets_won_1 = (s1_1 > s1_2 ? 1 : 0) + (s2_1 > s2_2 ? 1 : 0) + (s3_1 > s3_2 ? 1 : 0)
+  const sets_won_2 = (s1_2 > s1_1 ? 1 : 0) + (s2_2 > s2_1 ? 1 : 0) + (s3_2 > s3_1 ? 1 : 0)
+
+  const winner_team_id = sets_won_1 > sets_won_2 ? match?.team_1_id : (sets_won_2 > sets_won_1 ? match?.team_2_id : null)
 
   const updateData: any = {
-    team_1_score: team1Score,
-    team_2_score: team2Score,
+    team_1_score: s1_1,
+    team_2_score: s1_2,
+    team_1_score_2: s2_1,
+    team_2_score_2: s2_2,
+    team_1_score_3: s3_1,
+    team_2_score_3: s3_2,
+    sets_won_1,
+    sets_won_2,
     status: 'final',
-    winner_team_id: team1Score !== team2Score ? winner_team_id : null,
+    winner_team_id,
     updated_at: new Date().toISOString()
   }
 

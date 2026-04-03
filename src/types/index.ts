@@ -109,6 +109,12 @@ export interface Match {
   team_2_id: string | null
   team_1_score: number
   team_2_score: number
+  team_1_score_2: number
+  team_2_score_2: number
+  team_1_score_3: number
+  team_2_score_3: number
+  sets_won_1: number
+  sets_won_2: number
   court: string | null
   round_number: number | null
   scheduled_time: string | null

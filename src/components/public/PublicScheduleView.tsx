@@ -106,42 +106,76 @@ function MatchCard({ match }: { match: Match }) {
   const isLive = match.status === 'live'
 
   return (
-    <div className={`p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl group hover:border-black dark:hover:border-white transition-all shadow-sm`}>
-       <div className="flex items-center justify-between gap-4">
-          <div className="flex-1 space-y-3">
-             <div className="flex items-center justify-between">
-                <p className={`font-black uppercase tracking-tight text-sm truncate ${isFinal && match.winner_team_id === match.team_1_id ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
-                   {match.team_1?.team_name || 'TBD'}
-                </p>
-                {isFinal && <p className="font-black text-lg">{match.team_1_score}</p>}
-             </div>
-             <div className="flex items-center justify-between">
-                <p className={`font-black uppercase tracking-tight text-sm truncate ${isFinal && match.winner_team_id === match.team_2_id ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
-                   {match.team_2?.team_name || 'TBD'}
-                </p>
-                {isFinal && <p className="font-black text-lg">{match.team_2_score}</p>}
+    <div className={`p-5 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl group hover:border-black dark:hover:border-white transition-all shadow-sm overflow-hidden`}>
+       <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+             <div className="flex-1 space-y-2 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                   <p className={`font-black uppercase tracking-tight text-xs md:text-sm truncate ${isFinal && match.winner_team_id === match.team_1_id ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
+                      {match.team_1?.team_name || 'TBD'}
+                   </p>
+                   {isFinal && (
+                     <div className="flex gap-2">
+                       <span className="font-black text-sm tabular-nums">{match.team_1_score}</span>
+                       <span className="text-zinc-300">/</span>
+                       <span className="font-black text-sm tabular-nums">{match.team_1_score_2}</span>
+                       {match.team_1_score_3 > 0 || match.team_2_score_3 > 0 ? (
+                         <>
+                           <span className="text-zinc-300">/</span>
+                           <span className="font-black text-sm tabular-nums">{match.team_1_score_3}</span>
+                         </>
+                       ) : null}
+                     </div>
+                   )}
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                   <p className={`font-black uppercase tracking-tight text-xs md:text-sm truncate ${isFinal && match.winner_team_id === match.team_2_id ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
+                      {match.team_2?.team_name || 'TBD'}
+                   </p>
+                   {isFinal && (
+                     <div className="flex gap-2">
+                       <span className="font-black text-sm tabular-nums">{match.team_2_score}</span>
+                       <span className="text-zinc-300">/</span>
+                       <span className="font-black text-sm tabular-nums">{match.team_2_score_2}</span>
+                       {match.team_1_score_3 > 0 || match.team_2_score_3 > 0 ? (
+                         <>
+                           <span className="text-zinc-300">/</span>
+                           <span className="font-black text-sm tabular-nums">{match.team_2_score_3}</span>
+                         </>
+                       ) : null}
+                     </div>
+                   )}
+                </div>
              </div>
           </div>
           
-          <div className="flex flex-col items-center justify-center pl-6 border-l border-zinc-100 dark:border-zinc-900 min-w-[100px]">
-             <div className="flex flex-col items-center gap-1">
+          <div className="pt-3 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between">
+             <div className="flex items-center gap-3">
                 {isFinal ? (
-                   <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Final</span>
+                   <span className="text-[9px] font-black text-green-600 uppercase tracking-widest flex items-center gap-1.5">
+                     <span className="w-1.5 h-1.5 bg-green-600 rounded-full" />
+                     Final
+                   </span>
                 ) : isLive ? (
-                   <span className="text-[10px] font-black text-red-600 uppercase tracking-widest animate-pulse">Live</span>
+                   <span className="text-[9px] font-black text-red-600 uppercase tracking-widest animate-pulse flex items-center gap-1.5">
+                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+                     Live
+                   </span>
                 ) : (
-                   <span className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Upcoming</span>
+                   <span className="text-[9px] font-black text-zinc-300 uppercase tracking-widest">Upcoming</span>
                 )}
                 
                 {match.court && (
-                  <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[9px] font-black text-zinc-500 uppercase tracking-widest">
+                  <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[8px] font-black text-zinc-500 uppercase tracking-widest">
                     Court {match.court}
                   </span>
                 )}
              </div>
              
-             {match.stage_type === 'bracket' && match.pool && (
-                <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest mt-2">{match.pool.name}</p>
+             {match.stage_type === 'bracket' ? (
+                <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest italic">Bracket Match</p>
+             ) : (
+                <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">{match.pool?.name}</p>
              )}
           </div>
        </div>

@@ -16,7 +16,12 @@ interface ScoreEntryInterfaceProps {
 export default function ScoreEntryInterface({ eventId, initialMatches, divisions, teams, pools }: ScoreEntryInterfaceProps) {
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [activePoolId, setActivePoolId] = useState('')
-  const [scores, setScores] = useState<Record<string, { t1: number, t2: number, court: string }>>({})
+  const [scores, setScores] = useState<Record<string, { 
+    s1_1: number, s1_2: number, 
+    s2_1: number, s2_2: number, 
+    s3_1: number, s3_2: number,
+    court: string 
+  }>>({})
   const [loadingId, setLoadingId] = useState<string | null>(null)
 
   const divisionPools = pools.filter(p => p.division_id === divisionId)
@@ -32,18 +37,22 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
   const poolTeams = teams.filter(t => t.division_id === divisionId && initialMatches.some(m => m.pool_id === activePoolId && (m.team_1_id === t.id || m.team_2_id === t.id)))
   const standings = calculateStandings(poolTeams, poolMatches)
 
-  const handleScoreChange = (matchId: string, team: 't1' | 't2', val: string) => {
+  const handleScoreChange = (matchId: string, set: 1 | 2 | 3, team: 1 | 2, val: string) => {
     const num = parseInt(val) || 0
     const match = initialMatches.find(m => m.id === matchId)
     setScores(prev => ({
       ...prev,
       [matchId]: {
         ...(prev[matchId] || { 
-          t1: match?.team_1_score || 0, 
-          t2: match?.team_2_score || 0,
+          s1_1: match?.team_1_score || 0, 
+          s1_2: match?.team_2_score || 0,
+          s2_1: match?.team_1_score_2 || 0,
+          s2_2: match?.team_2_score_2 || 0,
+          s3_1: match?.team_1_score_3 || 0,
+          s3_2: match?.team_2_score_3 || 0,
           court: match?.court || '' 
         }),
-        [team]: num
+        [`s${set}_${team}`]: num
       }
     }))
   }
@@ -54,8 +63,12 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
       ...prev,
       [matchId]: {
         ...(prev[matchId] || { 
-          t1: match?.team_1_score || 0, 
-          t2: match?.team_2_score || 0,
+          s1_1: match?.team_1_score || 0, 
+          s1_2: match?.team_2_score || 0,
+          s2_1: match?.team_1_score_2 || 0,
+          s2_2: match?.team_2_score_2 || 0,
+          s3_1: match?.team_1_score_3 || 0,
+          s3_2: match?.team_2_score_3 || 0,
           court: match?.court || '' 
         }),
         court: val
@@ -64,12 +77,28 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
   }
 
   const handleSaveScore = async (matchId: string) => {
-    const matchData = scores[matchId]
-    if (!matchData) return
+    const m = scores[matchId]
+    const match = initialMatches.find(mm => mm.id === matchId)
+    const data = m || {
+      s1_1: match?.team_1_score || 0, 
+      s1_2: match?.team_2_score || 0,
+      s2_1: match?.team_1_score_2 || 0,
+      s2_2: match?.team_2_score_2 || 0,
+      s3_1: match?.team_1_score_3 || 0,
+      s3_2: match?.team_2_score_3 || 0,
+      court: match?.court || ''
+    }
 
     setLoadingId(matchId)
     try {
-      await updateMatchScore(eventId, matchId, matchData.t1, matchData.t2, matchData.court)
+      await updateMatchScore(
+        eventId, 
+        matchId, 
+        data.s1_1, data.s1_2,
+        data.s2_1, data.s2_2,
+        data.s3_1, data.s3_2,
+        data.court
+      )
     } catch (err: any) {
       alert(err.message)
     } finally {
@@ -161,73 +190,96 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
            <h2 className="text-sm font-black text-zinc-400 uppercase tracking-[0.2em] mb-6">Match Results</h2>
            <div className="grid grid-cols-1 gap-4">
               {poolMatches.length > 0 ? poolMatches.map((match) => {
-                 const currentData = scores[match.id] || { t1: match.team_1_score, t2: match.team_2_score, court: match.court || '' }
+                 const currentData = scores[match.id] || { 
+                   s1_1: match.team_1_score, s1_2: match.team_2_score, 
+                   s2_1: match.team_1_score_2, s2_2: match.team_2_score_2,
+                   s3_1: match.team_1_score_3, s3_2: match.team_2_score_3,
+                   court: match.court || '' 
+                 }
                  const isFinal = match.status === 'final'
                  const isSaving = loadingId === match.id
 
                  return (
-                    <div key={match.id} className={`p-6 bg-white dark:bg-zinc-950 border ${isFinal ? 'border-zinc-100 dark:border-zinc-900' : 'border-zinc-200 dark:border-zinc-800'} rounded-3xl group hover:shadow-md transition-all`}>
-                       <div className="flex flex-col md:flex-row items-center gap-8">
-                          <div className="flex-1 w-full flex items-center justify-between gap-4">
-                             <div className="flex-1 text-right">
-                                <p className="font-black text-black dark:text-white uppercase tracking-tight line-clamp-1">{match.team_1?.team_name}</p>
-                                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">{match.team_1?.captain_name}</p>
+                    <div key={match.id} className={`p-4 md:p-6 bg-white dark:bg-zinc-950 border ${isFinal ? 'border-zinc-100 dark:border-zinc-900' : 'border-zinc-200 dark:border-zinc-800'} rounded-3xl group hover:shadow-md transition-all overflow-hidden`}>
+                       <div className="flex flex-col gap-6">
+                          {/* Teams Header */}
+                          <div className="flex items-center justify-between gap-2">
+                             <div className="flex-1 text-right min-w-0">
+                                <p className="font-black text-black dark:text-white uppercase tracking-tight truncate text-sm md:text-base">{match.team_1?.team_name}</p>
+                                <p className="text-[8px] md:text-[10px] text-zinc-400 font-bold uppercase tracking-widest truncate">{match.team_1?.captain_name}</p>
                              </div>
                              
-                             <div className="flex items-center gap-2">
-                                <input 
-                                  type="number"
-                                  value={currentData.t1}
-                                  onChange={(e) => handleScoreChange(match.id, 't1', e.target.value)}
-                                  className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-2xl text-center text-2xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
-                                />
-                                <span className="font-black text-zinc-300">vs</span>
-                                <input 
-                                  type="number"
-                                  value={currentData.t2}
-                                  onChange={(e) => handleScoreChange(match.id, 't2', e.target.value)}
-                                  className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-2xl text-center text-2xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
-                                />
+                             <div className="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-full">
+                                <span className="font-black text-[10px] text-zinc-400 uppercase tracking-widest">VS</span>
                              </div>
 
-                             <div className="flex-1 text-left">
-                                <p className="font-black text-black dark:text-white uppercase tracking-tight line-clamp-1">{match.team_2?.team_name}</p>
-                                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">{match.team_2?.captain_name}</p>
+                             <div className="flex-1 text-left min-w-0">
+                                <p className="font-black text-black dark:text-white uppercase tracking-tight truncate text-sm md:text-base">{match.team_2?.team_name}</p>
+                                <p className="text-[8px] md:text-[10px] text-zinc-400 font-bold uppercase tracking-widest truncate">{match.team_2?.captain_name}</p>
                              </div>
                           </div>
 
-                          <div className="flex flex-row md:flex-col gap-2 min-w-[120px] w-full md:w-auto">
-                             <div className="flex-1 md:flex-none">
-                                <label className="block text-[8px] font-black text-zinc-400 uppercase tracking-widest mb-1 ml-1">Court</label>
+                          {/* Scores Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                             {[1, 2, 3].map((setNum) => (
+                               <div key={setNum} className="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                                 <div className="flex items-center justify-between mb-2">
+                                   <span className="text-[8px] font-black text-zinc-400 uppercase tracking-widest">Set {setNum}</span>
+                                   {setNum === 3 && <span className="text-[8px] font-black text-zinc-400/50 uppercase italic">To 15</span>}
+                                 </div>
+                                 <div className="flex items-center gap-3">
+                                   <input 
+                                     type="number"
+                                     value={(currentData as any)[`s${setNum}_1`]}
+                                     onChange={(e) => handleScoreChange(match.id, setNum as any, 1, e.target.value)}
+                                     className="w-full h-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-center text-xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
+                                   />
+                                   <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-800" />
+                                   <input 
+                                     type="number"
+                                     value={(currentData as any)[`s${setNum}_2`]}
+                                     onChange={(e) => handleScoreChange(match.id, setNum as any, 2, e.target.value)}
+                                     className="w-full h-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-center text-xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
+                                   />
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+
+                          {/* Footer Info & Actions */}
+                          <div className="flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4 pt-4 border-t border-zinc-50 dark:border-zinc-900">
+                             <div className="w-full sm:w-auto flex-1">
+                                <label className="block text-[8px] font-black text-zinc-400 uppercase tracking-widest mb-1 ml-1">Court Assignment</label>
                                 <input 
                                   type="text"
                                   value={currentData.court}
                                   placeholder="Court #"
                                   onChange={(e) => handleCourtChange(match.id, e.target.value)}
-                                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-black focus:border-black dark:focus:border-white transition-all outline-none"
+                                  className="w-full sm:w-32 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-black focus:border-black dark:focus:border-white transition-all outline-none"
                                 />
                              </div>
-                             <button 
-                               onClick={() => handleSaveScore(match.id)}
-                               disabled={isSaving}
-                               className={`flex-1 md:flex-none px-4 py-3 rounded-xl font-black uppercase tracking-tighter text-xs transition-all ${
-                                 isFinal 
-                                   ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black' 
-                                   : 'bg-black text-white dark:bg-white dark:text-black shadow-lg hover:scale-105'
-                               }`}
-                             >
-                                {isSaving ? '...' : isFinal ? 'Update' : 'Save'}
-                             </button>
+                             
+                             <div className="flex items-center gap-3 w-full sm:w-auto">
+                               {isFinal && (
+                                 <div className="hidden sm:flex items-center gap-2 mr-2">
+                                   <span className="w-2 h-2 bg-green-500 rounded-full" />
+                                   <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Final</span>
+                                 </div>
+                               )}
+                               <button 
+                                 onClick={() => handleSaveScore(match.id)}
+                                 disabled={isSaving}
+                                 className={`flex-1 sm:flex-none px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition-all ${
+                                   isFinal 
+                                     ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-500 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black' 
+                                     : 'bg-black text-white dark:bg-white dark:text-black shadow-lg shadow-zinc-200 dark:shadow-none hover:scale-105 active:scale-95'
+                                 }`}
+                               >
+                                  {isSaving ? '...' : isFinal ? 'Update' : 'Save Result'}
+                               </button>
+                             </div>
                           </div>
                        </div>
-                       {isFinal && (
-                          <div className="mt-4 pt-4 border-t border-zinc-50 dark:border-zinc-900 flex justify-center">
-                            <p className="text-[10px] font-black text-green-600 uppercase tracking-widest flex items-center gap-2">
-                               <span className="w-1 h-1 bg-green-600 rounded-full animate-pulse" />
-                               Final Result Recorded
-                            </p>
-                          </div>
-                       )}
                     </div>
                  )
               }) : (

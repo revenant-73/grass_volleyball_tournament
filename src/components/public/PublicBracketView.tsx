@@ -79,23 +79,43 @@ export default function PublicBracketView({
 
                     return (
                       <div key={match.id} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                        <div className="p-6 space-y-4">
-                          <div className="flex items-center justify-between gap-6">
-                            <span className={`font-black uppercase tracking-tight text-sm truncate ${isFinal && match.winner_team_id === team1?.id ? 'text-emerald-600' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                        <div className="p-5 space-y-4">
+                          <div className="flex items-center justify-between gap-4">
+                            <span className={`font-black uppercase tracking-tight text-xs md:text-sm truncate min-w-0 flex-1 ${isFinal && match.winner_team_id === team1?.id ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
                               {team1?.team_name || 'TBD'}
                             </span>
-                            <span className="font-black text-xl tabular-nums">
-                              {match.team_1_score}
-                            </span>
+                            {isFinal && (
+                              <div className="flex gap-1.5 shrink-0 tabular-nums">
+                                <span className="font-black text-xs md:text-sm">{match.team_1_score}</span>
+                                <span className="text-zinc-200 text-xs md:text-sm">/</span>
+                                <span className="font-black text-xs md:text-sm">{match.team_1_score_2}</span>
+                                {(match.team_1_score_3 > 0 || match.team_2_score_3 > 0) && (
+                                  <>
+                                    <span className="text-zinc-200 text-xs md:text-sm">/</span>
+                                    <span className="font-black text-xs md:text-sm">{match.team_1_score_3}</span>
+                                  </>
+                                )}
+                              </div>
+                            )}
                           </div>
                           <div className="h-px bg-zinc-50 dark:bg-zinc-900" />
-                          <div className="flex items-center justify-between gap-6">
-                            <span className={`font-black uppercase tracking-tight text-sm truncate ${isFinal && match.winner_team_id === team2?.id ? 'text-emerald-600' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                          <div className="flex items-center justify-between gap-4">
+                            <span className={`font-black uppercase tracking-tight text-xs md:text-sm truncate min-w-0 flex-1 ${isFinal && match.winner_team_id === team2?.id ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
                               {team2?.team_name || 'TBD'}
                             </span>
-                            <span className="font-black text-xl tabular-nums">
-                              {match.team_2_score}
-                            </span>
+                            {isFinal && (
+                              <div className="flex gap-1.5 shrink-0 tabular-nums">
+                                <span className="font-black text-xs md:text-sm">{match.team_2_score}</span>
+                                <span className="text-zinc-200 text-xs md:text-sm">/</span>
+                                <span className="font-black text-xs md:text-sm">{match.team_2_score_2}</span>
+                                {(match.team_1_score_3 > 0 || match.team_2_score_3 > 0) && (
+                                  <>
+                                    <span className="text-zinc-200 text-xs md:text-sm">/</span>
+                                    <span className="font-black text-xs md:text-sm">{match.team_2_score_3}</span>
+                                  </>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
