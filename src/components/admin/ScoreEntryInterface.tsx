@@ -23,7 +23,8 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
     court: string 
   }>>({})
   const [loadingId, setLoadingId] = useState<string | null>(null)
-  const [activePoolId, setActivePoolId] = useState('')
+
+  const divisionPools = pools.filter(p => p.division_id === divisionId)
 
   // Set default pool if not set
   useEffect(() => {
