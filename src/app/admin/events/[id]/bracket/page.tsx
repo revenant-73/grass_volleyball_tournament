@@ -36,6 +36,12 @@ export default async function AdminBracketPage({
     .order('bracket_round', { ascending: true })
     .order('round_number', { ascending: true })
 
+  const { data: allTeams } = await supabase
+    .from('teams')
+    .select('*')
+    .in('division_id', (divisions || []).map(d => d.id))
+    .eq('status', 'paid')
+
   return (
     <div className="p-8 lg:p-12">
       <div className="max-w-7xl mx-auto">
@@ -62,6 +68,7 @@ export default async function AdminBracketPage({
           eventId={id}
           initialMatches={(matches as unknown) as Match[]}
           divisions={(divisions as unknown) as Division[]}
+          allTeams={(allTeams as unknown) as Team[]}
         />
       </div>
     </div>

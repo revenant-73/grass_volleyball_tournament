@@ -2,15 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { Match, Team, Division } from '@/types'
-import { generateBracket, updateBracketScore, toggleBracketPublish } from '@/app/admin/events/[id]/bracket/actions'
+import { 
+  generateBracket, 
+  updateBracketScore, 
+  toggleBracketPublish,
+  updateBracketMatch,
+  updateBracketTeam 
+} from '@/app/admin/events/[id]/bracket/actions'
 
 interface BracketManagerProps {
   eventId: string
   initialMatches: Match[]
   divisions: Division[]
+  allTeams: Team[]
 }
 
-export default function BracketManager({ eventId, initialMatches, divisions }: BracketManagerProps) {
+export default function BracketManager({ eventId, initialMatches, divisions, allTeams }: BracketManagerProps) {
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [loading, setLoading] = useState(false)
   const [scores, setScores] = useState<Record<string, { 
@@ -20,36 +27,11 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
   }>>({})
 
   const divisionMatches = initialMatches.filter(m => m.division_id === divisionId)
+  const divisionTeams = allTeams.filter(t => t.division_id === divisionId)
   const currentDivision = divisions.find(d => d.id === divisionId)
   const isPublished = currentDivision?.bracket_published || false
   
   const rounds = Array.from(new Set(divisionMatches.map(m => m.bracket_round))).sort((a,b) => (a||0) - (b||0))
-
-  // Sync scores state when initialMatches updates (props from server)
-  useEffect(() => {
-    setScores(prev => {
-      const newScores = { ...prev }
-      let changed = false
-      Object.keys(newScores).forEach(matchId => {
-        const match = initialMatches.find(m => m.id === matchId)
-        if (match) {
-          const s = newScores[matchId]
-          if (
-            s.s1_1 === (match.team_1_score ?? 0) &&
-            s.s1_2 === (match.team_2_score ?? 0) &&
-            s.s2_1 === (match.team_1_score_2 ?? 0) &&
-            s.s2_2 === (match.team_2_score_2 ?? 0) &&
-            s.s3_1 === (match.team_1_score_3 ?? 0) &&
-            s.s3_2 === (match.team_2_score_3 ?? 0)
-          ) {
-            delete newScores[matchId]
-            changed = true
-          }
-        }
-      })
-      return changed ? newScores : prev
-    })
-  }, [initialMatches])
 
   const handleTogglePublish = async () => {
     setLoading(true)
@@ -117,6 +99,22 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
       alert(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCourtChange = async (matchId: string, court: string) => {
+    try {
+      await updateBracketMatch(eventId, matchId, { court })
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
+
+  const handleTeamChange = async (matchId: string, slot: 1 | 2, teamId: string) => {
+    try {
+      await updateBracketTeam(eventId, matchId, slot, teamId === 'null' ? null : teamId)
+    } catch (err: any) {
+      alert(err.message)
     }
   }
 
@@ -188,7 +186,7 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
         <div className="space-y-16">
            <div className="flex flex-col md:flex-row items-start gap-8 overflow-x-auto pb-8">
               {rounds.map(round => (
-                 <div key={round} className="flex-1 min-w-[300px] space-y-6">
+                 <div key={round} className="flex-1 min-w-[320px] space-y-6">
                     <h3 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] border-b border-zinc-100 dark:border-zinc-900 pb-4">
                        {round === 1 ? 'Round 1' : round === 2 ? 'Semifinals' : 'Finals'}
                     </h3>
@@ -203,12 +201,30 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
 
                           return (
                              <div key={match.id} className="p-4 md:p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm space-y-6">
+                                <div className="flex items-center justify-between">
+                                   <div className="flex items-center gap-2">
+                                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Court</span>
+                                      <input 
+                                        type="text" 
+                                        defaultValue={match.court || ''}
+                                        onBlur={(e) => handleCourtChange(match.id, e.target.value)}
+                                        className="w-10 px-2 py-1 bg-zinc-50 dark:bg-zinc-900 border-2 border-transparent focus:border-black dark:focus:border-white rounded-lg font-black text-center text-[10px] outline-none transition-all"
+                                      />
+                                   </div>
+                                   <span className="text-[9px] font-black uppercase tracking-widest text-zinc-300">#{match.round_number}</span>
+                                </div>
+
                                 <div className="space-y-4">
-                                   <div className="flex items-center justify-between gap-4">
-                                      <p className={`font-black uppercase tracking-tight text-[10px] md:text-xs truncate flex-1 ${match.winner_team_id === match.team_1_id && isFinal ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
-                                         {match.team_1?.team_name || 'TBD'}
-                                      </p>
-                                      <div className="flex gap-2">
+                                   <div className="space-y-2">
+                                      <select 
+                                        value={match.team_1_id || 'null'}
+                                        onChange={(e) => handleTeamChange(match.id, 1, e.target.value)}
+                                        className={`w-full bg-transparent border-0 font-black uppercase tracking-tight text-[10px] outline-none cursor-pointer ${match.winner_team_id === match.team_1_id && isFinal ? 'text-black dark:text-white' : 'text-zinc-400'}`}
+                                      >
+                                         <option value="null">Select Team 1</option>
+                                         {divisionTeams.map(t => <option key={t.id} value={t.id}>{t.team_name}</option>)}
+                                      </select>
+                                      <div className="flex gap-2 justify-end">
                                         {[1, 2, 3].map(s => (
                                           <input 
                                             key={`${match.id}-s${s}-t1`}
@@ -221,11 +237,17 @@ export default function BracketManager({ eventId, initialMatches, divisions }: B
                                         ))}
                                       </div>
                                    </div>
-                                   <div className="flex items-center justify-between gap-4">
-                                      <p className={`font-black uppercase tracking-tight text-[10px] md:text-xs truncate flex-1 ${match.winner_team_id === match.team_2_id && isFinal ? 'text-black dark:text-white' : 'text-zinc-400'}`}>
-                                         {match.team_2?.team_name || 'TBD'}
-                                      </p>
-                                      <div className="flex gap-2">
+
+                                   <div className="pt-2 border-t border-zinc-50 dark:border-zinc-900 space-y-2">
+                                      <select 
+                                        value={match.team_2_id || 'null'}
+                                        onChange={(e) => handleTeamChange(match.id, 2, e.target.value)}
+                                        className={`w-full bg-transparent border-0 font-black uppercase tracking-tight text-[10px] outline-none cursor-pointer ${match.winner_team_id === match.team_2_id && isFinal ? 'text-black dark:text-white' : 'text-zinc-400'}`}
+                                      >
+                                         <option value="null">Select Team 2</option>
+                                         {divisionTeams.map(t => <option key={t.id} value={t.id}>{t.team_name}</option>)}
+                                      </select>
+                                      <div className="flex gap-2 justify-end">
                                         {[1, 2, 3].map(s => (
                                           <input 
                                             key={`${match.id}-s${s}-t2`}

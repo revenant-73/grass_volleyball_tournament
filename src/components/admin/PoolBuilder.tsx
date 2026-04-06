@@ -18,7 +18,7 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [numPools, setNumPools] = useState(2)
   const [loading, setLoading] = useState(false)
-  const [previewPools, setPreviewPools] = useState<{ name: string, teamIds: string[], teams: Team[] }[]>([])
+  const [previewPools, setPreviewPools] = useState<{ name: string, teamIds: string[], teams: Team[], court: string }[]>([])
   const [matchCount, setMatchCount] = useState(0)
 
   useEffect(() => {
@@ -40,9 +40,9 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
   const recommendedFormat = getRecommendedFormat(divisionTeams.length)
 
   const generateSnakePools = () => {
-    const pools: { name: string, teamIds: string[], teams: Team[] }[] = []
+    const pools: { name: string, teamIds: string[], teams: Team[], court: string }[] = []
     for (let i = 0; i < numPools; i++) {
-      pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [] })
+      pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [], court: (i + 1).toString() })
     }
 
     // Sort by manual_seed
@@ -76,9 +76,9 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     const sizes = getPoolSizes(divisionTeams.length)
     if (sizes.length === 0) return
 
-    const pools: { name: string, teamIds: string[], teams: Team[] }[] = []
+    const pools: { name: string, teamIds: string[], teams: Team[], court: string }[] = []
     sizes.forEach((_, i) => {
-      pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [] })
+      pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [], court: (i + 1).toString() })
     })
 
     // Sort by manual_seed
@@ -116,13 +116,19 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     if (!confirm('This will replace any existing pools for this division. Continue?')) return
     setLoading(true)
     try {
-      await createPools(eventId, divisionId, previewPools.map(p => ({ name: p.name, teamIds: p.teamIds })))
+      await createPools(eventId, divisionId, previewPools.map(p => ({ name: p.name, teamIds: p.teamIds, court: p.court })))
       alert('Pools saved successfully')
     } catch (err: any) {
       alert(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  const updatePreviewCourt = (index: number, court: string) => {
+    const newPools = [...previewPools]
+    newPools[index] = { ...newPools[index], court }
+    setPreviewPools(newPools)
   }
 
   const handleClear = async () => {
@@ -228,7 +234,12 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
              {currentDivisionPools.map(pool => (
                 <div key={pool.id} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-8">
-                   <h3 className="text-xl font-black uppercase tracking-tighter mb-6 pb-4 border-b border-zinc-50 dark:border-zinc-900">{pool.name}</h3>
+                   <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-50 dark:border-zinc-900">
+                      <h3 className="text-xl font-black uppercase tracking-tighter">{pool.name}</h3>
+                      <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                         Court {pool.court || 'TBD'}
+                      </span>
+                   </div>
                    <div className="space-y-4">
                       {pool.assignments?.sort((a,b) => a.seed - b.seed).map((asgn, i) => (
                          <div key={asgn.id} className="flex items-center gap-4">
@@ -267,7 +278,18 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {previewPools.map((pool, pi) => (
                    <div key={pi} className="bg-zinc-900 text-white rounded-[2rem] p-8 shadow-2xl">
-                      <h3 className="text-xl font-black uppercase tracking-tighter mb-6 pb-4 border-b border-white/10">{pool.name}</h3>
+                      <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                         <h3 className="text-xl font-black uppercase tracking-tighter">{pool.name}</h3>
+                         <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Court</span>
+                            <input 
+                              type="text" 
+                              value={pool.court}
+                              onChange={(e) => updatePreviewCourt(pi, e.target.value)}
+                              className="w-12 px-2 py-1 bg-white/10 border border-white/10 rounded font-black text-center text-xs outline-none focus:border-white/40 transition-all"
+                            />
+                         </div>
+                      </div>
                       <div className="space-y-4">
                          {pool.teams.map((team, ti) => (
                             <div key={team.id} className="flex items-center gap-4">

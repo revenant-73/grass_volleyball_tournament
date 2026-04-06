@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function createPools(eventId: string, divisionId: string, poolData: { name: string, teamIds: string[] }[]) {
+export async function createPools(eventId: string, divisionId: string, poolData: { name: string, teamIds: string[], court: string }[]) {
   const supabase = await createClient()
 
   // 1. Delete existing pools for this division (cascade deletes assignments)
@@ -16,11 +16,11 @@ export async function createPools(eventId: string, divisionId: string, poolData:
 
   // 2. Create new pools and assignments
   for (let i = 0; i < poolData.length; i++) {
-    const { name, teamIds } = poolData[i]
+    const { name, teamIds, court } = poolData[i]
     
     const { data: pool, error: poolError } = await supabase
       .from('pools')
-      .insert([{ division_id: divisionId, name, display_order: i }])
+      .insert([{ division_id: divisionId, name, display_order: i, court }])
       .select()
       .single()
 
@@ -71,7 +71,7 @@ export async function generatePoolMatches(eventId: string, divisionId: string) {
 
   for (const pool of pools) {
     const teamIds = pool.assignments.map((a: any) => a.team_id)
-    const courtNumber = (pool.display_order !== undefined ? pool.display_order + 1 : 1).toString()
+    const courtNumber = pool.court || (pool.display_order !== undefined ? pool.display_order + 1 : 1).toString()
     
     // Generate all unique pairs
     for (let i = 0; i < teamIds.length; i++) {

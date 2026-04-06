@@ -152,3 +152,39 @@ export async function toggleBracketPublish(eventId: string, divisionId: string, 
   revalidatePath(`/admin/events/${eventId}/bracket`)
   revalidatePath(`/events/[slug]`, 'layout')
 }
+
+export async function updateBracketMatch(eventId: string, matchId: string, updates: Partial<Match>) {
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('matches')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', matchId)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath(`/admin/events/${eventId}/bracket`)
+}
+
+export async function updateBracketTeam(eventId: string, matchId: string, teamSlot: 1 | 2, teamId: string | null) {
+  const supabase = await createClient()
+
+  const updateData: any = {}
+  if (teamSlot === 1) updateData.team_1_id = teamId
+  else updateData.team_2_id = teamId
+
+  const { error } = await supabase
+    .from('matches')
+    .update({
+      ...updateData,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', matchId)
+
+  if (error) throw new Error(error.message)
+
+  revalidatePath(`/admin/events/${eventId}/bracket`)
+}
