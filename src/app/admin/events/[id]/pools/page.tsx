@@ -22,13 +22,23 @@ export default async function PoolsPage({
     notFound()
   }
 
-  const { data: divisions } = await supabase
+  const { data: divisions, error: divisionsError } = await supabase
     .from('divisions')
     .select('*')
     .eq('event_id', id)
     .order('name')
 
-  const { data: teams } = await supabase
+  if (divisionsError) {
+    console.error('Divisions fetch error:', divisionsError)
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold text-red-600">Error loading divisions</h2>
+        <p className="text-zinc-500 mt-2">{divisionsError.message}</p>
+      </div>
+    )
+  }
+
+  const { data: teams, error: teamsError } = await supabase
     .from('teams')
     .select('*, division:divisions(*)')
     .in('division_id', (divisions || []).map(d => d.id))
@@ -36,11 +46,31 @@ export default async function PoolsPage({
     .order('manual_seed', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: true })
 
-  const { data: existingPools } = await supabase
+  if (teamsError) {
+    console.error('Teams fetch error:', teamsError)
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold text-red-600">Error loading teams</h2>
+        <p className="text-zinc-500 mt-2">{teamsError.message}</p>
+      </div>
+    )
+  }
+
+  const { data: existingPools, error: poolsError } = await supabase
     .from('pools')
     .select('*, assignments:pool_assignments(*, team:teams(*))')
     .in('division_id', (divisions || []).map(d => d.id))
     .order('display_order', { ascending: true })
+
+  if (poolsError) {
+    console.error('Pools fetch error:', poolsError)
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold text-red-600">Error loading pools</h2>
+        <p className="text-zinc-500 mt-2">{poolsError.message}</p>
+      </div>
+    )
+  }
 
   return (
     <div className="p-8 lg:p-12">
