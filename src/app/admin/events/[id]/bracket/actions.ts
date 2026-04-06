@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { calculateStandings, rankTeamsAcrossPools, generateSingleElimBracket } from '@/lib/tournament-logic'
+import { Match } from '@/types'
 
 export async function generateBracket(eventId: string, divisionId: string, teamsToAdvance: number) {
   const supabase = await createClient()
