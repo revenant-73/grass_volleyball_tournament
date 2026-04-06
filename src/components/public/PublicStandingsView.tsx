@@ -57,9 +57,14 @@ export default function PublicStandingsView({
                   <h3 className="text-xl font-bold text-black dark:text-white uppercase tracking-tighter">
                     Pool {pool.name}
                   </h3>
-                  <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                    {poolTeams.length} Teams
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                      Court {pool.court || 'TBD'}
+                    </span>
+                    <span className="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                      {poolTeams.length} Teams
+                    </span>
+                  </div>
                 </div>
                 <div className="p-6">
                   <div className="overflow-x-auto">

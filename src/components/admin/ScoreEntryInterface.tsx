@@ -19,8 +19,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
   const [scores, setScores] = useState<Record<string, { 
     s1_1: number, s1_2: number, 
     s2_1: number, s2_2: number, 
-    s3_1: number, s3_2: number,
-    court: string 
+    s3_1: number, s3_2: number
   }>>({})
   const [loadingId, setLoadingId] = useState<string | null>(null)
 
@@ -51,8 +50,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
             s.s2_1 === (match.team_1_score_2 ?? 0) &&
             s.s2_2 === (match.team_2_score_2 ?? 0) &&
             s.s3_1 === (match.team_1_score_3 ?? 0) &&
-            s.s3_2 === (match.team_2_score_3 ?? 0) &&
-            s.court === (match.court || '')
+            s.s3_2 === (match.team_2_score_3 ?? 0)
           ) {
             delete newScores[matchId]
             changed = true
@@ -79,29 +77,9 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
           s2_1: match?.team_1_score_2 || 0,
           s2_2: match?.team_2_score_2 || 0,
           s3_1: match?.team_1_score_3 || 0,
-          s3_2: match?.team_2_score_3 || 0,
-          court: match?.court || '' 
+          s3_2: match?.team_2_score_3 || 0
         }),
         [`s${set}_${team}`]: num
-      }
-    }))
-  }
-
-  const handleCourtChange = (matchId: string, val: string) => {
-    const match = initialMatches.find(m => m.id === matchId)
-    setScores(prev => ({
-      ...prev,
-      [matchId]: {
-        ...(prev[matchId] || { 
-          s1_1: match?.team_1_score || 0, 
-          s1_2: match?.team_2_score || 0,
-          s2_1: match?.team_1_score_2 || 0,
-          s2_2: match?.team_2_score_2 || 0,
-          s3_1: match?.team_1_score_3 || 0,
-          s3_2: match?.team_2_score_3 || 0,
-          court: match?.court || '' 
-        }),
-        court: val
       }
     }))
   }
@@ -117,8 +95,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
       s2_1: m ? m.s2_1 : (match.team_1_score_2 || 0),
       s2_2: m ? m.s2_2 : (match.team_2_score_2 || 0),
       s3_1: m ? m.s3_1 : (match.team_1_score_3 || 0),
-      s3_2: m ? m.s3_2 : (match.team_2_score_3 || 0),
-      court: m ? m.court : (match.court || '')
+      s3_2: m ? m.s3_2 : (match.team_2_score_3 || 0)
     }
 
     setLoadingId(matchId)
@@ -128,8 +105,7 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
         matchId, 
         data.s1_1, data.s1_2,
         data.s2_1, data.s2_2,
-        data.s3_1, data.s3_2,
-        data.court
+        data.s3_1, data.s3_2
       )
     } catch (err: any) {
       alert(err.message)
@@ -283,14 +259,9 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
                           {/* Footer Info & Actions */}
                           <div className="flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4 pt-4 border-t border-zinc-50 dark:border-zinc-900">
                              <div className="w-full sm:w-auto flex-1">
-                                <label className="block text-[8px] font-black text-zinc-400 uppercase tracking-widest mb-1 ml-1">Court Assignment</label>
-                                <input 
-                                  type="text"
-                                  value={currentData.court}
-                                  placeholder="Court #"
-                                  onChange={(e) => handleCourtChange(match.id, e.target.value)}
-                                  className="w-full sm:w-32 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-black focus:border-black dark:focus:border-white transition-all outline-none"
-                                />
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                                   Court {match.court || match.pool?.court || 'TBD'}
+                                </p>
                              </div>
                              
                              <div className="flex items-center gap-3 w-full sm:w-auto">

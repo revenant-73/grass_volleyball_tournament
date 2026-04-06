@@ -129,8 +129,7 @@ export async function updateMatchScore(
   matchId: string, 
   s1_1: number, s1_2: number, 
   s2_1: number, s2_2: number, 
-  s3_1: number, s3_2: number,
-  court?: string
+  s3_1: number, s3_2: number
 ) {
   const supabase = await createClient()
 
@@ -158,10 +157,6 @@ export async function updateMatchScore(
     status: 'final',
     winner_team_id,
     updated_at: new Date().toISOString()
-  }
-
-  if (court !== undefined) {
-    updateData.court = court
   }
 
   const { error } = await supabase
