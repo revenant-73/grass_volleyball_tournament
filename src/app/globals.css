@@ -5,6 +5,7 @@
   --foreground: #171717;
   --card-bg: #ffffff;
   --card-border: #e5e7eb;
+  --coral: #FF7F50;
 }
 
 @theme inline {
@@ -12,6 +13,7 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card-bg);
   --color-border: var(--card-border);
+  --color-coral: var(--coral);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

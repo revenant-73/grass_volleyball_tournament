@@ -87,7 +87,7 @@ export default async function PublicEventDetailPage({
             {isRegistrationOpen && upcomingDate && (
                <Link 
                  href={`/events/${event.slug}/register`}
-                 className="w-full lg:w-auto px-12 py-5 bg-black text-white dark:bg-white dark:text-black font-black rounded-2xl hover:opacity-90 transition-opacity uppercase tracking-tighter shadow-2xl text-center"
+                 className="w-full lg:w-auto px-12 py-5 bg-coral text-white font-black rounded-2xl hover:scale-105 transition-transform uppercase tracking-tighter shadow-2xl text-center"
                >
                   Register Team
                </Link>
@@ -147,7 +147,7 @@ export default async function PublicEventDetailPage({
                        <Link 
                           key={division.id} 
                           href={`/events/${event.slug}/register?divisionId=${division.id}`}
-                          className="p-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl flex items-center justify-between group hover:border-black dark:hover:border-white transition-all shadow-sm text-left"
+                          className="p-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl flex items-center justify-between group hover:border-coral transition-all shadow-sm text-left"
                        >
                           <div>
                              <h3 className="text-2xl font-black text-black dark:text-white uppercase tracking-tighter mb-2">{division.name}</h3>

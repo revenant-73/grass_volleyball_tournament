@@ -23,7 +23,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <span className="text-xl font-black uppercase tracking-tighter text-black dark:text-white">
-            Grass Doubles
+            Grass <span className="text-coral">Doubles</span>
           </span>
         </Link>
         
@@ -36,7 +36,7 @@ export default function Header() {
             For Directors
           </Link>
           {user ? (
-            <Link href="/admin" className="px-4 py-2 bg-black text-white dark:bg-white dark:text-black text-xs font-black uppercase tracking-widest rounded-lg hover:opacity-90 transition-opacity">
+            <Link href="/admin" className="px-4 py-2 bg-coral text-white text-xs font-black uppercase tracking-widest rounded-lg hover:opacity-90 transition-opacity">
               Dashboard
             </Link>
           ) : (
@@ -86,7 +86,7 @@ export default function Header() {
               <Link 
                 href="/admin" 
                 onClick={() => setIsMenuOpen(false)}
-                className="w-full py-4 bg-black text-white dark:bg-white dark:text-black text-center text-sm font-black uppercase tracking-widest rounded-2xl"
+                className="w-full py-4 bg-coral text-white text-center text-sm font-black uppercase tracking-widest rounded-2xl"
               >
                 Go to Dashboard
               </Link>

@@ -24,7 +24,7 @@ export default async function PublicEventsPage() {
       <div className="max-w-6xl mx-auto">
         <header className="mb-16 text-center lg:text-left">
           <h1 className="text-5xl font-black text-black dark:text-white uppercase tracking-tighter mb-4">
-            Tournament Schedule
+            Tournament <span className="text-coral">Schedule</span>
           </h1>
           <p className="text-xl font-bold text-zinc-500 dark:text-zinc-400">
             Find and register for upcoming grass doubles events.
@@ -80,7 +80,7 @@ export default async function PublicEventsPage() {
                       </svg>
                       <span className="text-sm font-bold">{event.location_name}</span>
                     </div>
-                    <button className="w-full py-4 bg-zinc-50 dark:bg-zinc-900 group-hover:bg-black dark:group-hover:bg-white text-black dark:text-white group-hover:text-white dark:group-hover:text-black font-black rounded-2xl transition-all uppercase tracking-tighter text-sm">
+                    <button className="w-full py-4 bg-zinc-50 dark:bg-zinc-900 group-hover:bg-coral text-black dark:text-white group-hover:text-white font-black rounded-2xl transition-all uppercase tracking-tighter text-sm">
                       View Event
                     </button>
                   </div>

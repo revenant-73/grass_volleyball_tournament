@@ -32,14 +32,14 @@ export default async function Home() {
           <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8">
             <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-black dark:text-white uppercase leading-[0.9] break-words">
               Find your next <br />
-              <span className="text-zinc-400">tournament</span>
+              <span className="text-coral">tournament</span>
             </h1>
             <p className="max-w-xl mx-auto text-lg sm:text-xl font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest">
               The premier platform for grass doubles volleyball participants and directors.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8 w-full max-w-sm mx-auto sm:max-w-none">
-              <Link href="/events" className="w-full sm:w-auto px-8 sm:px-12 py-5 bg-black text-white dark:bg-white dark:text-black text-lg font-black uppercase tracking-tighter rounded-2xl hover:scale-105 transition-transform shadow-2xl text-center">
+              <Link href="/events" className="w-full sm:w-auto px-8 sm:px-12 py-5 bg-coral text-white text-lg font-black uppercase tracking-tighter rounded-2xl hover:scale-105 transition-transform shadow-2xl text-center">
                 Explore Events
               </Link>
               <Link href="#directors" className="w-full sm:w-auto px-8 sm:px-12 py-5 border-2 border-zinc-200 dark:border-zinc-800 text-black dark:text-white text-lg font-black uppercase tracking-tighter rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-center">
@@ -54,7 +54,7 @@ export default async function Home() {
           <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-6">
               <div className="space-y-2">
-                <h2 className="text-sm font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.2em]">Next up</h2>
+                <h2 className="text-sm font-black text-coral uppercase tracking-[0.2em]">Next up</h2>
                 <h3 className="text-3xl sm:text-4xl font-black text-black dark:text-white uppercase tracking-tighter">Featured Tournaments</h3>
               </div>
               <Link href="/events" className="text-xs font-black text-zinc-400 hover:text-black dark:hover:text-white uppercase tracking-widest transition-colors pb-2">
@@ -130,21 +130,21 @@ export default async function Home() {
                 <h3 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter leading-[0.9]">Built for the <br /> modern player</h3>
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-white text-black rounded-2xl flex items-center justify-center font-black text-sm sm:text-base">01</div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-coral text-white rounded-2xl flex items-center justify-center font-black text-sm sm:text-base">01</div>
                     <div>
                       <h4 className="font-black uppercase tracking-widest text-xs sm:text-sm mb-1">Live Mobile Brackets</h4>
                       <p className="text-zinc-400 font-bold text-sm">Follow scores, seedings, and tournament progress in real-time from your phone on the field.</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-white text-black rounded-2xl flex items-center justify-center font-black text-sm sm:text-base">02</div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-coral text-white rounded-2xl flex items-center justify-center font-black text-sm sm:text-base">02</div>
                     <div>
                       <h4 className="font-black uppercase tracking-widest text-xs sm:text-sm mb-1">Instant Registration</h4>
                       <p className="text-zinc-400 font-bold text-sm">Sign up with your partner in seconds. Integrated payments and digital waivers mean no more lines.</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-white text-black rounded-2xl flex items-center justify-center font-black text-sm sm:text-base">03</div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-coral text-white rounded-2xl flex items-center justify-center font-black text-sm sm:text-base">03</div>
                     <div>
                       <h4 className="font-black uppercase tracking-widest text-xs sm:text-sm mb-1">Live Notifications</h4>
                       <p className="text-zinc-400 font-bold text-sm">Stay informed with announcements directly from tournament directors during the event.</p>
@@ -197,7 +197,7 @@ export default async function Home() {
                </div>
             </div>
             <div className="pt-12">
-               <Link href="/login" className="inline-flex w-full sm:w-auto px-10 sm:px-12 py-5 bg-black text-white dark:bg-white dark:text-black text-lg font-black uppercase tracking-tighter rounded-2xl hover:opacity-90 transition-opacity text-center items-center justify-center">
+               <Link href="/login" className="inline-flex w-full sm:w-auto px-10 sm:px-12 py-5 bg-coral text-white text-lg font-black uppercase tracking-tighter rounded-2xl hover:opacity-90 transition-opacity text-center items-center justify-center">
                   Create Your First Event
                </Link>
             </div>
