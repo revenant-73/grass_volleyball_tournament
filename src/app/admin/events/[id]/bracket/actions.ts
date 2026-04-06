@@ -37,7 +37,17 @@ export async function generateBracket(eventId: string, divisionId: string, teams
     if (insertError) throw new Error(insertError.message)
   }
 
+  const { data: eventData } = await supabase
+    .from('events')
+    .select('slug')
+    .eq('id', eventId)
+    .single()
+
   revalidatePath(`/admin/events/${eventId}/bracket`)
+  if (eventData?.slug) {
+    revalidatePath(`/events/${eventData.slug}/bracket`)
+    revalidatePath(`/events/${eventData.slug}`)
+  }
 }
 
 export async function updateBracketScore(
@@ -137,7 +147,17 @@ export async function updateBracketScore(
     }
   }
 
+  const { data: eventData } = await supabase
+    .from('events')
+    .select('slug')
+    .eq('id', eventId)
+    .single()
+
   revalidatePath(`/admin/events/${eventId}/bracket`)
+  if (eventData?.slug) {
+    revalidatePath(`/events/${eventData.slug}/bracket`)
+    revalidatePath(`/events/${eventData.slug}`)
+  }
 }
 
 export async function toggleBracketPublish(eventId: string, divisionId: string, publish: boolean) {
@@ -150,8 +170,18 @@ export async function toggleBracketPublish(eventId: string, divisionId: string, 
 
   if (error) throw new Error(error.message)
 
+  // Get event slug to revalidate public page
+  const { data: event } = await supabase
+    .from('events')
+    .select('slug')
+    .eq('id', eventId)
+    .single()
+
   revalidatePath(`/admin/events/${eventId}/bracket`)
-  revalidatePath(`/events/[slug]`, 'layout')
+  if (event?.slug) {
+    revalidatePath(`/events/${event.slug}/bracket`)
+    revalidatePath(`/events/${event.slug}`)
+  }
 }
 
 export async function updateBracketMatch(eventId: string, matchId: string, updates: Partial<Match>) {
@@ -167,7 +197,17 @@ export async function updateBracketMatch(eventId: string, matchId: string, updat
 
   if (error) throw new Error(error.message)
 
+  const { data: eventData } = await supabase
+    .from('events')
+    .select('slug')
+    .eq('id', eventId)
+    .single()
+
   revalidatePath(`/admin/events/${eventId}/bracket`)
+  if (eventData?.slug) {
+    revalidatePath(`/events/${eventData.slug}/bracket`)
+    revalidatePath(`/events/${eventData.slug}`)
+  }
 }
 
 export async function updateBracketTeam(eventId: string, matchId: string, teamSlot: 1 | 2, teamId: string | null) {
@@ -187,5 +227,15 @@ export async function updateBracketTeam(eventId: string, matchId: string, teamSl
 
   if (error) throw new Error(error.message)
 
+  const { data: eventData } = await supabase
+    .from('events')
+    .select('slug')
+    .eq('id', eventId)
+    .single()
+
   revalidatePath(`/admin/events/${eventId}/bracket`)
+  if (eventData?.slug) {
+    revalidatePath(`/events/${eventData.slug}/bracket`)
+    revalidatePath(`/events/${eventData.slug}`)
+  }
 }

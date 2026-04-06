@@ -26,8 +26,8 @@ export default function BracketManager({ eventId, initialMatches, divisions, all
     s3_1: number, s3_2: number
   }>>({})
 
-  const divisionMatches = initialMatches.filter(m => m.division_id === divisionId)
-  const divisionTeams = allTeams.filter(t => t.division_id === divisionId)
+  const divisionMatches = (initialMatches || []).filter(m => m.division_id === divisionId)
+  const divisionTeams = (allTeams || []).filter(t => t.division_id === divisionId)
   const currentDivision = divisions.find(d => d.id === divisionId)
   const isPublished = currentDivision?.bracket_published || false
   
