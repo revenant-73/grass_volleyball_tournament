@@ -1,17 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Team, Division, Pool } from '@/types'
+import { Team, Division, Pool, Match } from '@/types'
 import { createPools, clearPools, generatePoolMatches, clearPoolMatches } from '@/app/admin/events/[id]/pools/actions'
 import { createClient } from '@/lib/supabase/client'
-import { Match } from '@/types'
 import { getRecommendedFormat, getPoolSizes } from '@/lib/tournament-formats'
 
 interface PoolBuilderProps {
   eventId: string
   initialTeams: Team[]
   divisions: Division[]
-  existingPools: (Pool & { assignments: any[] })[]
+  existingPools: (Pool & { assignments: { team_id: string; seed: number; team?: Team }[] })[]
 }
 
 export default function PoolBuilder({ eventId, initialTeams, divisions, existingPools }: PoolBuilderProps) {
@@ -91,7 +90,7 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     // Distribute teams based on sizes (snake draft style)
     let teamIndex = 0
     let reverse = false
-    let maxTeamsInAnyPool = Math.max(...sizes)
+    const maxTeamsInAnyPool = Math.max(...sizes)
 
     // For mixed pool sizes, we iterate round by round
     for (let round = 0; round < maxTeamsInAnyPool; round++) {
@@ -118,8 +117,9 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     try {
       await createPools(eventId, divisionId, previewPools.map(p => ({ name: p.name, teamIds: p.teamIds, court: p.court })))
       alert('Pools saved successfully')
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     } finally {
       setLoading(false)
     }
@@ -137,8 +137,9 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     try {
       await clearPools(eventId, divisionId)
       alert('Pools cleared')
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     } finally {
       setLoading(false)
     }

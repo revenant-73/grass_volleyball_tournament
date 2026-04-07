@@ -11,7 +11,7 @@ interface SponsorListProps {
 }
 
 export default function SponsorList({ eventId, initialSponsors }: SponsorListProps) {
-  const [sponsors, setSponsors] = useState<Sponsor[]>(initialSponsors)
+  const [sponsors] = useState<Sponsor[]>(initialSponsors)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
 

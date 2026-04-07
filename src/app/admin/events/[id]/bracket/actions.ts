@@ -111,7 +111,7 @@ export async function updateBracketScore(
       .single()
 
     if (nextMatch) {
-      const updateData: any = {}
+      const updateData: { team_1_id?: string | null; team_2_id?: string | null } = {}
       if (isTeam1InNext) updateData.team_1_id = winnerId
       else updateData.team_2_id = winnerId
 
@@ -128,7 +128,6 @@ export async function updateBracketScore(
       // If we are at SF (Round 2), we need F (Round 3).
       
       // Let's check max round for this count
-      const totalTeams = 8 // Hardcoded for now or derived from QF count
       const maxRounds = 3 
 
       if (nextRound <= maxRounds) {
@@ -213,7 +212,7 @@ export async function updateBracketMatch(eventId: string, matchId: string, updat
 export async function updateBracketTeam(eventId: string, matchId: string, teamSlot: 1 | 2, teamId: string | null) {
   const supabase = await createClient()
 
-  const updateData: any = {}
+  const updateData: { team_1_id?: string | null; team_2_id?: string | null } = {}
   if (teamSlot === 1) updateData.team_1_id = teamId
   else updateData.team_2_id = teamId
 

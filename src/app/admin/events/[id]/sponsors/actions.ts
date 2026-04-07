@@ -71,19 +71,14 @@ export async function updateSponsor(eventId: string, sponsorId: string, formData
     logo_url = await uploadLogo(supabase, logoFile)
   }
 
-  const updateData: any = {
-    name,
-    website_url,
-    display_order
-  }
-
-  if (logo_url) {
-    updateData.logo_url = logo_url
-  }
-
   const { error } = await supabase
     .from('sponsors')
-    .update(updateData)
+    .update({
+      name,
+      website_url,
+      display_order,
+      ...(logo_url ? { logo_url } : {})
+    })
     .eq('id', sponsorId)
 
   if (error) {

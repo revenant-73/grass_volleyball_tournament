@@ -25,10 +25,12 @@ export default async function PublicSchedulePage({
     notFound()
   }
 
+  const divisions = event.divisions as unknown as Division[]
+
   const { data: matches } = await supabase
     .from('matches')
     .select('*, team_1:teams!team_1_id(*), team_2:teams!team_2_id(*), pool:pools(*)')
-    .in('division_id', event.divisions.map((d: any) => d.id))
+    .in('division_id', divisions.map((d) => d.id))
     .order('created_at', { ascending: true })
 
   return (
@@ -37,7 +39,7 @@ export default async function PublicSchedulePage({
         <TournamentNav slug={slug} eventName={event.name} />
         
         <PublicScheduleView 
-          divisions={event.divisions}
+          divisions={divisions}
           initialMatches={(matches as unknown) as Match[]}
         />
       </div>

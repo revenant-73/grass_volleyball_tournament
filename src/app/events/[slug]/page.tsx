@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Division } from '@/types'
+import { Division, Announcement, Sponsor } from '@/types'
 
 export default async function PublicEventDetailPage({
   params,
@@ -27,8 +27,9 @@ export default async function PublicEventDetailPage({
     notFound()
   }
 
-  const urgentAnnouncement = event.announcements?.find((a: any) => a.is_urgent)
-  const regularAnnouncements = event.announcements?.filter((a: any) => !a.is_urgent) || []
+  const announcements = (event.announcements as unknown as Announcement[]) || []
+  const urgentAnnouncement = announcements.find((a) => a.is_urgent)
+  const regularAnnouncements = announcements.filter((a) => !a.is_urgent)
 
   const isRegistrationOpen = event.status === 'open'
   const upcomingDate = new Date(event.date_start) >= new Date(new Date().setHours(0,0,0,0))
@@ -124,7 +125,7 @@ export default async function PublicEventDetailPage({
               <section>
                 <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Latest Updates</h2>
                 <div className="space-y-4">
-                  {regularAnnouncements.map((announcement: any) => (
+                  {regularAnnouncements.map((announcement) => (
                     <div key={announcement.id} className="p-6 bg-card border-border rounded-3xl shadow-sm">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-black text-black dark:text-white uppercase tracking-tight">{announcement.title}</h3>
@@ -143,7 +144,7 @@ export default async function PublicEventDetailPage({
               <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Tournament Divisions</h2>
               <div className="grid grid-cols-1 gap-6">
                  {event.divisions && event.divisions.length > 0 ? (
-                    event.divisions.map((division: Division) => (
+                    (event.divisions as unknown as Division[]).map((division) => (
                        <Link 
                           key={division.id} 
                           href={`/events/${event.slug}/register?divisionId=${division.id}`}
@@ -175,9 +176,9 @@ export default async function PublicEventDetailPage({
               <section>
                 <h2 className="text-xs font-black text-zinc-400 dark:text-zinc-600 uppercase tracking-[0.3em] mb-8">Event Sponsors</h2>
                 <div className="flex flex-wrap items-center gap-12">
-                  {event.sponsors
-                    .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-                    .map((sponsor: any) => (
+                  {(event.sponsors as unknown as Sponsor[])
+                    .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+                    .map((sponsor) => (
                     <div key={sponsor.id} className="group transition-all duration-500">
                       {sponsor.website_url ? (
                         <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="block text-center space-y-3">

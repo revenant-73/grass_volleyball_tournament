@@ -5,7 +5,9 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
-export async function registerTeam(eventId: string, formData: any) {
+import { Team } from '@/types'
+
+export async function registerTeam(eventId: string, formData: Partial<Team> & { waiver_accepted: boolean }) {
   const supabase = await createClient()
   const headerList = await headers()
   const ip = headerList.get('x-forwarded-for') || 'unknown'

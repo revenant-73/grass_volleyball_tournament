@@ -107,8 +107,9 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
         data.s2_1, data.s2_2,
         data.s3_1, data.s3_2
       )
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     } finally {
       setLoadingId(null)
     }
@@ -239,16 +240,16 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
                                    <input 
                                      key={`${match.id}-s${setNum}-t1`}
                                      type="number"
-                                     value={(currentData as any)[`s${setNum}_1`]}
-                                     onChange={(e) => handleScoreChange(match.id, setNum as any, 1, e.target.value)}
+                                     value={(currentData as Record<string, number>)[`s${setNum}_1`]}
+                                     onChange={(e) => handleScoreChange(match.id, setNum as 1 | 2 | 3, 1, e.target.value)}
                                      className="w-full h-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-center text-xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
                                    />
                                    <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-800" />
                                    <input 
                                      key={`${match.id}-s${setNum}-t2`}
                                      type="number"
-                                     value={(currentData as any)[`s${setNum}_2`]}
-                                     onChange={(e) => handleScoreChange(match.id, setNum as any, 2, e.target.value)}
+                                     value={(currentData as Record<string, number>)[`s${setNum}_2`]}
+                                     onChange={(e) => handleScoreChange(match.id, setNum as 1 | 2 | 3, 2, e.target.value)}
                                      className="w-full h-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-center text-xl font-black focus:border-black dark:focus:border-white transition-all outline-none"
                                    />
                                  </div>

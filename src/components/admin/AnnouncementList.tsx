@@ -10,7 +10,7 @@ interface AnnouncementListProps {
 }
 
 export default function AnnouncementList({ eventId, initialAnnouncements }: AnnouncementListProps) {
-  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements)
+  const [announcements] = useState<Announcement[]>(initialAnnouncements)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
 

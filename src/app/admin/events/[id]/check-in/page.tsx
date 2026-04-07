@@ -69,7 +69,7 @@ export default async function CheckInPage({
 
         <CheckInInterface 
           eventId={id}
-          initialTeams={(teams as unknown) as (Team & { check_ins: any[] })[]}
+          initialTeams={(teams as unknown) as (Team & { check_ins: { id: string; team_id: string; event_id: string }[] })[]}
           divisions={(divisions as unknown) as Division[]}
         />
       </div>

@@ -1,6 +1,7 @@
 import { getStripe } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { Division } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,8 +33,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Team not found' }, { status: 404 })
   }
 
-  const division = team.division
-  const event = division.event
+  const division = team.division as unknown as (Division & { event: Record<string, unknown> })
+  const event = division.event as any
 
   if (!division.price_cents || division.price_cents === 0) {
     return NextResponse.redirect(new URL(`/events/registration-confirmed?teamId=${team.id}`, req.url))
@@ -72,8 +73,9 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.redirect(session.url)
-  } catch (err: any) {
-    console.error('Stripe error:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('Stripe error:', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

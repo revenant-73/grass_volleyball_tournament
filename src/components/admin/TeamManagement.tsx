@@ -56,9 +56,10 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
     try {
       await refundTeam(eventId, teamId)
       alert('Refund processed successfully')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error refunding team:', err)
-      alert(err.message || 'Failed to refund team')
+      const message = err instanceof Error ? err.message : 'Failed to refund team'
+      alert(message)
     } finally {
       setIsRefunding(null)
     }

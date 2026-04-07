@@ -25,7 +25,8 @@ export default async function PublicStandingsPage({
     notFound()
   }
 
-  const divisionIds = event.divisions.map((d: any) => d.id)
+  const divisions = event.divisions as unknown as Division[]
+  const divisionIds = divisions.map((d) => d.id)
 
   const { data: teamsData } = await supabase
     .from('teams')
@@ -34,10 +35,10 @@ export default async function PublicStandingsPage({
     .eq('status', 'paid')
 
   // Flatten the pool_id into the team object
-  const teams = (teamsData || []).map((t: any) => ({
+  const teams = (teamsData || []).map((t) => ({
     ...t,
-    pool_id: t.pool_assignments?.[0]?.pool_id || null
-  }))
+    pool_id: (t.pool_assignments as unknown as { pool_id: string }[])?.[0]?.pool_id || null
+  })) as Team[]
 
   const { data: matches } = await supabase
     .from('matches')
@@ -57,7 +58,7 @@ export default async function PublicStandingsPage({
         <TournamentNav slug={slug} eventName={event.name} />
         
         <PublicStandingsView 
-          divisions={event.divisions}
+          divisions={divisions}
           teams={(teams as unknown) as Team[]}
           matches={(matches as unknown) as Match[]}
           pools={(pools as unknown) as Pool[]}

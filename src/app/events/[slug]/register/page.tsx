@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import RegistrationForm from '@/components/public/RegistrationForm'
+import { Division, Event } from '@/types'
 
 export default async function RegistrationPage({
   params,
@@ -27,9 +28,11 @@ export default async function RegistrationPage({
     notFound()
   }
 
+  const divisions = event.divisions as unknown as (Division & { teams?: { count: number }[] })[]
+
   // Pre-selected division if divisionId is in URL
   const selectedDivision = divisionId 
-    ? event.divisions.find((d: any) => d.id === divisionId)
+    ? divisions.find((d) => d.id === divisionId)
     : null
 
   return (
@@ -51,7 +54,7 @@ export default async function RegistrationPage({
         </header>
 
         <RegistrationForm 
-          event={event} 
+          event={event as unknown as (Event & { divisions: (Division & { teams?: { count: number }[] })[] })} 
           initialDivisionId={divisionId}
         />
       </div>

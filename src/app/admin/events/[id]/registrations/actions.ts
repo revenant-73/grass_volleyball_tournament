@@ -74,9 +74,10 @@ export async function refundTeam(eventId: string, teamId: string) {
 
     revalidatePath(`/admin/events/${eventId}/registrations`)
     return { success: true }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Stripe refund error:', err)
-    throw new Error(err.message || 'Failed to process refund with Stripe')
+    const message = err instanceof Error ? err.message : 'Failed to process refund with Stripe'
+    throw new Error(message)
   }
 }
 

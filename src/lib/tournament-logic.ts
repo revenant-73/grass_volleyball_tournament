@@ -104,7 +104,7 @@ export function rankTeamsAcrossPools(allStandings: TeamStanding[]): Team[] {
 }
 
 export function generateSingleElimBracket(divisionId: string, rankedTeams: Team[]) {
-  const matches: any[] = []
+  const matches: Partial<Match>[] = []
   const count = rankedTeams.length
 
   if (count < 4) return []

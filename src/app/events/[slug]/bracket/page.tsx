@@ -25,7 +25,8 @@ export default async function PublicBracketPage({
     notFound()
   }
 
-  const divisionIds = event.divisions.map((d: any) => d.id)
+  const divisions = event.divisions as unknown as Division[]
+  const divisionIds = divisions.map((d) => d.id)
 
   const { data: teams } = await supabase
     .from('teams')
@@ -47,7 +48,7 @@ export default async function PublicBracketPage({
         <TournamentNav slug={slug} eventName={event.name} />
         
         <PublicBracketView 
-          divisions={event.divisions}
+          divisions={divisions}
           teams={(teams as unknown) as Team[]}
           bracketMatches={(bracketMatches as unknown) as Match[]}
         />

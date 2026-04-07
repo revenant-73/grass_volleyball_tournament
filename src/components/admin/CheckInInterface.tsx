@@ -6,7 +6,7 @@ import { toggleCheckIn } from '@/app/admin/events/[id]/registrations/actions'
 
 interface CheckInInterfaceProps {
   eventId: string
-  initialTeams: (Team & { check_ins: any[] })[]
+  initialTeams: (Team & { check_ins: { id: string; team_id: string; event_id: string }[] })[]
   divisions: Division[]
 }
 

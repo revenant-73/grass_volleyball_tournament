@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { PoolAssignment } from '@/types'
 
 export async function createPools(eventId: string, divisionId: string, poolData: { name: string, teamIds: string[], court: string }[]) {
   const supabase = await createClient()
@@ -70,7 +71,7 @@ export async function generatePoolMatches(eventId: string, divisionId: string) {
   const allMatches = []
 
   for (const pool of pools) {
-    const teamIds = pool.assignments.map((a: any) => a.team_id)
+    const teamIds = (pool.assignments as PoolAssignment[]).map((a) => a.team_id)
     const courtNumber = pool.court || (pool.display_order !== undefined ? pool.display_order + 1 : 1).toString()
     
     // Generate all unique pairs
@@ -145,23 +146,21 @@ export async function updateMatchScore(
 
   const winner_team_id = sets_won_1 > sets_won_2 ? match?.team_1_id : (sets_won_2 > sets_won_1 ? match?.team_2_id : null)
 
-  const updateData: any = {
-    team_1_score: s1_1,
-    team_2_score: s1_2,
-    team_1_score_2: s2_1,
-    team_2_score_2: s2_2,
-    team_1_score_3: s3_1,
-    team_2_score_3: s3_2,
-    sets_won_1,
-    sets_won_2,
-    status: 'final',
-    winner_team_id,
-    updated_at: new Date().toISOString()
-  }
-
   const { error } = await supabase
     .from('matches')
-    .update(updateData)
+    .update({
+      team_1_score: s1_1,
+      team_2_score: s1_2,
+      team_1_score_2: s2_1,
+      team_2_score_2: s2_2,
+      team_1_score_3: s3_1,
+      team_2_score_3: s3_2,
+      sets_won_1,
+      sets_won_2,
+      status: 'final',
+      winner_team_id,
+      updated_at: new Date().toISOString()
+    })
     .eq('id', matchId)
 
   if (error) throw new Error(error.message)

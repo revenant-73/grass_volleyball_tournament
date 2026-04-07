@@ -18,9 +18,10 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET || ''
     )
-  } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`)
-    return NextResponse.json({ error: err.message }, { status: 400 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error(`Webhook Error: ${message}`)
+    return NextResponse.json({ error: message }, { status: 400 })
   }
 
   const supabase = await createClient()

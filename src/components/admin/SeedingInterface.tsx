@@ -51,8 +51,9 @@ export default function SeedingInterface({ eventId, initialTeams, divisions }: S
       await saveSeeding(eventId, divisionId, teamSeeds)
       setHasChanges(false)
       alert('Seeding saved successfully')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      setError(message)
     } finally {
       setLoading(false)
     }

@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import PoolBuilder from '@/components/admin/PoolBuilder'
-import { Team, Division } from '@/types'
+import { Team, Division, Pool } from '@/types'
 
 export default async function PoolsPage({
   params,
@@ -98,7 +98,7 @@ export default async function PoolsPage({
           eventId={id}
           initialTeams={(teams as unknown) as Team[]}
           divisions={(divisions as unknown) as Division[]}
-          existingPools={existingPools as any}
+          existingPools={existingPools as (Pool & { assignments: { team_id: string; seed: number; team?: Team }[] })[]}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Match, Team, Division } from '@/types'
 import { 
   generateBracket, 
@@ -37,8 +37,9 @@ export default function BracketManager({ eventId, initialMatches, divisions, all
     setLoading(true)
     try {
       await toggleBracketPublish(eventId, divisionId, !isPublished)
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     } finally {
       setLoading(false)
     }
@@ -48,8 +49,9 @@ export default function BracketManager({ eventId, initialMatches, divisions, all
     setLoading(true)
     try {
       await generateBracket(eventId, divisionId, count)
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     } finally {
       setLoading(false)
     }
@@ -95,8 +97,9 @@ export default function BracketManager({ eventId, initialMatches, divisions, all
         data.s2_1, data.s2_2,
         data.s3_1, data.s3_2
       )
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     } finally {
       setLoading(false)
     }
@@ -105,16 +108,18 @@ export default function BracketManager({ eventId, initialMatches, divisions, all
   const handleCourtChange = async (matchId: string, court: string) => {
     try {
       await updateBracketMatch(eventId, matchId, { court })
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     }
   }
 
   const handleTeamChange = async (matchId: string, slot: 1 | 2, teamId: string) => {
     try {
       await updateBracketTeam(eventId, matchId, slot, teamId === 'null' ? null : teamId)
-    } catch (err: any) {
-      alert(err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred'
+      alert(message)
     }
   }
 
