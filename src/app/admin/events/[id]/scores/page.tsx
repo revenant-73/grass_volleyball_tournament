@@ -69,6 +69,7 @@ export default async function ScoresPage({
 
         <ScoreEntryInterface 
           eventId={id}
+          eventSlug={event.slug}
           initialMatches={(matches as unknown) as Match[]}
           divisions={(divisions as unknown) as Division[]}
           teams={(teams as unknown) as Team[]}

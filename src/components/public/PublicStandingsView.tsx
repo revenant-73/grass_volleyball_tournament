@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Division, Team, Match, Pool } from '@/types'
 import { calculateStandings } from '@/lib/tournament-logic'
+import { createClient } from '@/lib/supabase/client'
 
 interface PublicStandingsViewProps {
   divisions: Division[]
@@ -14,12 +15,45 @@ interface PublicStandingsViewProps {
 export default function PublicStandingsView({
   divisions,
   teams,
-  matches,
+  matches: initialMatches,
   pools,
 }: PublicStandingsViewProps) {
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>(
     divisions[0]?.id || ''
   )
+  const [matches, setMatches] = useState<Match[]>(initialMatches)
+
+  useEffect(() => {
+    if (!selectedDivisionId) return
+    const supabase = createClient()
+    
+    // Subscribe to match updates only for this division
+    const channel = supabase
+      .channel(`public-matches-${selectedDivisionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'matches',
+          filter: `division_id=eq.${selectedDivisionId}`
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setMatches(prev => [...prev, payload.new as Match])
+          } else if (payload.eventType === 'UPDATE') {
+            setMatches(prev => prev.map(m => m.id === (payload.new as Match).id ? (payload.new as Match) : m))
+          } else if (payload.eventType === 'DELETE') {
+            setMatches(prev => prev.filter(m => m.id !== (payload.old as { id: string }).id))
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [selectedDivisionId])
 
   const divisionPools = pools.filter((p) => p.division_id === selectedDivisionId)
   const divisionTeams = teams.filter((t) => t.division_id === selectedDivisionId)
@@ -49,7 +83,7 @@ export default function PublicStandingsView({
           divisionPools.map((pool) => {
             const poolTeams = divisionTeams.filter((t) => t.pool_id === pool.id)
             const poolMatches = divisionMatches.filter((m) => m.pool_id === pool.id)
-            const standings = calculateStandings(poolTeams, poolMatches)
+            const standings = calculateStandings(poolTeams, poolMatches, pool.format_type)
 
             return (
               <div key={pool.id} className="bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm">

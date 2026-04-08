@@ -7,13 +7,14 @@ import { createAnnouncement, updateAnnouncement, deleteAnnouncement } from '@/ap
 
 interface AnnouncementFormProps {
   eventId: string
+  eventSlug?: string
   initialData?: Announcement
   announcementId?: string
   onCancel: () => void
   onSuccess: () => void
 }
 
-export default function AnnouncementForm({ eventId, initialData, announcementId, onCancel, onSuccess }: AnnouncementFormProps) {
+export default function AnnouncementForm({ eventId, eventSlug, initialData, announcementId, onCancel, onSuccess }: AnnouncementFormProps) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -47,9 +48,9 @@ export default function AnnouncementForm({ eventId, initialData, announcementId,
 
     try {
       if (announcementId) {
-        await updateAnnouncement(eventId, announcementId, submissionData)
+        await updateAnnouncement(eventId, announcementId, submissionData, eventSlug)
       } else {
-        await createAnnouncement(eventId, submissionData)
+        await createAnnouncement(eventId, submissionData, eventSlug)
       }
       onSuccess()
     } catch (err: unknown) {
@@ -65,7 +66,7 @@ export default function AnnouncementForm({ eventId, initialData, announcementId,
     
     setLoading(true)
     try {
-      await deleteAnnouncement(eventId, announcementId)
+      await deleteAnnouncement(eventId, announcementId, eventSlug)
       onSuccess()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong'

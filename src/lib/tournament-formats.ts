@@ -12,6 +12,7 @@ export const POOL_FORMATS: Record<number, PoolFormat> = {
   4: { teams: 4, description: '1 pool of 4', courts: 1, poolCount: 1, layout: 'Ct 1: 4', waves: 6 },
   5: { teams: 5, description: '1 pool of 5', courts: 2, poolCount: 1, layout: 'Cts 1-2: 5', waves: 5 },
   6: { teams: 6, description: '2 pools of 3', courts: 2, poolCount: 2, layout: 'Cts 1-2: 3+3', waves: 5 },
+  7: { teams: 7, description: '1 pool of 4, 1 pool of 3', courts: 2, poolCount: 2, layout: 'Ct 1: 4 (2/3); Ct 2: 3 (Straight 3)', waves: 6 },
   8: { teams: 8, description: '2 pools of 4', courts: 2, poolCount: 2, layout: 'Ct 1: 4; Ct 2: 4', waves: 6 },
   9: { teams: 9, description: '1 pool of 4, 1 pool of 5', courts: 3, poolCount: 2, layout: 'Ct 1: 4; Cts 2-3: 5', waves: 6 },
   10: { teams: 10, description: '2 pools of 5', courts: 4, poolCount: 2, layout: 'Cts 1-2: 5; Cts 3-4: 5', waves: 5 },
@@ -45,7 +46,7 @@ export function getRecommendedFormat(teamCount: number): PoolFormat | null {
 
 // Helper to determine team distribution for complex layouts (e.g. 1 pool of 4, 1 pool of 5)
 export function getPoolSizes(teamCount: number): number[] {
-  if (teamCount === 7) return [] // Conflict
+  if (teamCount === 7) return [4, 3]
   if (teamCount === 9) return [4, 5]
   if (teamCount === 11) return [3, 3, 5]
   if (teamCount === 13) return [4, 4, 5]

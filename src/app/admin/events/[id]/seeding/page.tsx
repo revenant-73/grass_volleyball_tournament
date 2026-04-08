@@ -85,6 +85,7 @@ export default async function SeedingPage({
 
         <SeedingInterface 
           eventId={id}
+          eventSlug={event.slug}
           initialTeams={(teams as unknown) as Team[]}
           divisions={(divisions as unknown) as Division[]}
         />

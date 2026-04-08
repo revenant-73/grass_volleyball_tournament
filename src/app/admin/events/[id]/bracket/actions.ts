@@ -2,20 +2,41 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { calculateStandings, rankTeamsAcrossPools, generateSingleElimBracket } from '@/lib/tournament-logic'
-import { Match } from '@/types'
+import { calculateStandings, rankTeamsAcrossPools, generateSingleElimBracket, TeamStanding } from '@/lib/tournament-logic'
+import { Match, Team } from '@/types'
 
 export async function generateBracket(eventId: string, divisionId: string, teamsToAdvance: number) {
   const supabase = await createClient()
 
-  // 1. Get all matches and teams for standings
-  const { data: teams } = await supabase.from('teams').select('*').eq('division_id', divisionId).eq('status', 'paid')
+  // 1. Get all pools, teams, and matches for standings
+  const { data: pools } = await supabase.from('pools').select('*').eq('division_id', divisionId)
+  const { data: teamsData } = await supabase
+    .from('teams')
+    .select('*, pool_assignments(pool_id)')
+    .eq('division_id', divisionId)
+    .eq('status', 'paid')
+
   const { data: matches } = await supabase.from('matches').select('*').eq('division_id', divisionId).eq('stage_type', 'pool')
 
-  if (!teams || !matches) throw new Error('Data not found')
+  if (!teamsData || !matches || !pools) throw new Error('Data not found')
 
-  const standings = calculateStandings(teams, matches)
-  const rankedTeams = rankTeamsAcrossPools(standings).slice(0, teamsToAdvance)
+  const teams = (teamsData || []).map((t) => ({
+    ...t,
+    pool_id: (t.pool_assignments as unknown as { pool_id: string }[])?.[0]?.pool_id || null
+  })) as Team[]
+
+  const allStandings: TeamStanding[] = []
+  
+  // Calculate standings per pool to handle mixed formats fairly
+  for (const pool of pools) {
+    const poolTeams = teams.filter(t => t.pool_id === pool.id)
+    const poolMatches = matches.filter(m => m.pool_id === pool.id)
+    if (poolTeams.length > 0) {
+      allStandings.push(...calculateStandings(poolTeams, poolMatches, pool.format_type))
+    }
+  }
+
+  const rankedTeams = rankTeamsAcrossPools(allStandings).slice(0, teamsToAdvance)
 
   // 2. Clear existing bracket matches
   const { error: deleteError } = await supabase

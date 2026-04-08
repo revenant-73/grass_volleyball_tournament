@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Team, Division, Pool, Match } from '@/types'
+import { Team, Division, Pool } from '@/types'
 import { createPools, clearPools, generatePoolMatches, clearPoolMatches } from '@/app/admin/events/[id]/pools/actions'
 import { createClient } from '@/lib/supabase/client'
 import { getRecommendedFormat, getPoolSizes } from '@/lib/tournament-formats'
@@ -17,7 +17,7 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [numPools, setNumPools] = useState(2)
   const [loading, setLoading] = useState(false)
-  const [previewPools, setPreviewPools] = useState<{ name: string, teamIds: string[], teams: Team[], court: string }[]>([])
+  const [previewPools, setPreviewPools] = useState<{ name: string, teamIds: string[], teams: Team[], court: string, format_type?: string }[]>([])
   const [matchCount, setMatchCount] = useState(0)
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
   const recommendedFormat = getRecommendedFormat(divisionTeams.length)
 
   const generateSnakePools = () => {
-    const pools: { name: string, teamIds: string[], teams: Team[], court: string }[] = []
+    const pools: { name: string, teamIds: string[], teams: Team[], court: string, format_type?: string }[] = []
     for (let i = 0; i < numPools; i++) {
       pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [], court: (i + 1).toString() })
     }
@@ -75,9 +75,19 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     const sizes = getPoolSizes(divisionTeams.length)
     if (sizes.length === 0) return
 
-    const pools: { name: string, teamIds: string[], teams: Team[], court: string }[] = []
-    sizes.forEach((_, i) => {
-      pools.push({ name: `Pool ${String.fromCharCode(65 + i)}`, teamIds: [], teams: [], court: (i + 1).toString() })
+    const pools: { name: string, teamIds: string[], teams: Team[], court: string, format_type?: string }[] = []
+    sizes.forEach((size, i) => {
+      let format_type = undefined
+      if (divisionTeams.length === 7) {
+        format_type = size === 4 ? 'best_2_of_3' : 'straight_3'
+      }
+      pools.push({ 
+        name: `Pool ${String.fromCharCode(65 + i)}`, 
+        teamIds: [], 
+        teams: [], 
+        court: (i + 1).toString(),
+        format_type
+      })
     })
 
     // Sort by manual_seed
@@ -115,7 +125,12 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
     if (!confirm('This will replace any existing pools for this division. Continue?')) return
     setLoading(true)
     try {
-      await createPools(eventId, divisionId, previewPools.map(p => ({ name: p.name, teamIds: p.teamIds, court: p.court })))
+      await createPools(eventId, divisionId, previewPools.map(p => ({ 
+        name: p.name, 
+        teamIds: p.teamIds, 
+        court: p.court,
+        format_type: p.format_type
+      })))
       alert('Pools saved successfully')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'An error occurred'
@@ -151,14 +166,14 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
        {divisionTeams.length > 0 && (
          <div className={`p-8 rounded-[2.5rem] border-2 transition-all ${
            divisionTeams.length === 7 
-             ? 'bg-red-50 border-red-100 dark:bg-red-900/10 dark:border-red-900/20' 
+             ? 'bg-amber-50 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/20' 
              : 'bg-zinc-900 border-zinc-800 text-white'
          }`}>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                <div>
                   <div className="flex items-center gap-3 mb-2">
                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${
-                       divisionTeams.length === 7 ? 'bg-red-600 text-white' : 'bg-white/20 text-white'
+                       divisionTeams.length === 7 ? 'bg-amber-600 text-white' : 'bg-white/20 text-white'
                      }`}>
                         {divisionTeams.length} Teams Checked In
                      </span>
@@ -168,18 +183,16 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
                         </span>
                      )}
                   </div>
-                  <h2 className={`text-2xl font-black uppercase tracking-tighter leading-tight ${divisionTeams.length === 7 ? 'text-red-600 dark:text-red-500' : ''}`}>
-                     {divisionTeams.length === 7 
-                       ? "7 Teams: No Clean Format" 
-                       : recommendedFormat?.description || "Custom Format Required"}
+                  <h2 className={`text-2xl font-black uppercase tracking-tighter leading-tight ${divisionTeams.length === 7 ? 'text-amber-600 dark:text-amber-500' : ''}`}>
+                     {recommendedFormat?.description || "Custom Format Required"}
                   </h2>
-                  <p className={`mt-2 font-bold text-sm ${divisionTeams.length === 7 ? 'text-red-400' : 'text-zinc-400'}`}>
+                  <p className={`mt-2 font-bold text-sm ${divisionTeams.length === 7 ? 'text-amber-700/70' : 'text-zinc-400'}`}>
                      {divisionTeams.length === 7 
-                       ? "Rules prevent lone 3-team pools and require 5-team pools to use 2 courts. Please manually adjust."
+                       ? "7 Teams: One pool of 4 (Best 2/3) and one pool of 3 (Straight 3). Optimized for 2 courts."
                        : recommendedFormat?.layout || "Manual distribution required for this team count."}
                   </p>
                </div>
-               {recommendedFormat && divisionTeams.length !== 7 && (
+               {recommendedFormat && (
                   <button 
                     onClick={applyRecommendedSetup}
                     className="px-8 py-4 bg-white text-black font-black rounded-2xl uppercase tracking-tighter hover:bg-zinc-200 transition-colors shadow-xl"
@@ -326,7 +339,10 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
                        try {
                          await generatePoolMatches(eventId, divisionId)
                          window.location.reload()
-                       } catch(e: any) { alert(e.message) }
+                       } catch(e: unknown) { 
+                         const message = e instanceof Error ? e.message : 'An error occurred'
+                         alert(message) 
+                       }
                        finally { setLoading(false) }
                      }}
                      className="w-full py-4 bg-black text-white dark:bg-white dark:text-black font-black rounded-xl uppercase tracking-widest text-xs hover:opacity-90 transition-opacity"
@@ -341,7 +357,10 @@ export default function PoolBuilder({ eventId, initialTeams, divisions, existing
                         try {
                           await clearPoolMatches(eventId, divisionId)
                           window.location.reload()
-                        } catch(e: any) { alert(e.message) }
+                        } catch(e: unknown) { 
+                          const message = e instanceof Error ? e.message : 'An error occurred'
+                          alert(message) 
+                        }
                         finally { setLoading(false) }
                       }}
                      className="w-full py-4 bg-red-50 text-red-600 font-black rounded-xl uppercase tracking-widest text-xs hover:bg-red-100 transition-colors"

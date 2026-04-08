@@ -7,11 +7,12 @@ import TeamEditForm from './TeamEditForm'
 
 interface TeamManagementProps {
   eventId: string
+  eventSlug: string
   initialTeams: Team[]
   divisions: Division[]
 }
 
-export default function TeamManagement({ eventId, initialTeams, divisions }: TeamManagementProps) {
+export default function TeamManagement({ eventId, eventSlug, initialTeams, divisions }: TeamManagementProps) {
   const [search, setSearch] = useState('')
   const [divisionFilter, setDivisionFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -32,7 +33,7 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
 
   const handleStatusChange = async (teamId: string, status: TeamStatus) => {
     try {
-      await updateTeamStatus(eventId, teamId, status)
+      await updateTeamStatus(eventId, teamId, status, eventSlug)
     } catch (err) {
       console.error('Error updating status:', err)
       alert('Failed to update status')
@@ -42,7 +43,7 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
   const handleWithdraw = async (teamId: string) => {
     if (!confirm('Withdraw this team?')) return
     try {
-      await withdrawTeam(eventId, teamId)
+      await withdrawTeam(eventId, teamId, eventSlug)
     } catch (err) {
       console.error('Error withdrawing team:', err)
       alert('Failed to withdraw team')
@@ -54,7 +55,7 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
     
     setIsRefunding(teamId)
     try {
-      await refundTeam(eventId, teamId)
+      await refundTeam(eventId, teamId, eventSlug)
       alert('Refund processed successfully')
     } catch (err: unknown) {
       console.error('Error refunding team:', err)
@@ -204,6 +205,7 @@ export default function TeamManagement({ eventId, initialTeams, divisions }: Tea
       {editingTeam && (
         <TeamEditForm
           eventId={eventId}
+          eventSlug={eventSlug}
           team={editingTeam}
           onClose={() => setEditingTeam(null)}
         />

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { TeamStatus } from '@/types'
 import { getStripe } from '@/lib/stripe'
 
-export async function updateTeamStatus(eventId: string, teamId: string, status: TeamStatus) {
+export async function updateTeamStatus(eventId: string, teamId: string, status: TeamStatus, eventSlug?: string) {
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -18,9 +18,13 @@ export async function updateTeamStatus(eventId: string, teamId: string, status: 
   }
 
   revalidatePath(`/admin/events/${eventId}/registrations`)
+  
+  if (eventSlug) {
+    revalidatePath(`/events/${eventSlug}`)
+  }
 }
 
-export async function refundTeam(eventId: string, teamId: string) {
+export async function refundTeam(eventId: string, teamId: string, eventSlug?: string) {
   const supabase = await createClient()
   const stripe = getStripe()
 
@@ -73,6 +77,12 @@ export async function refundTeam(eventId: string, teamId: string) {
     }
 
     revalidatePath(`/admin/events/${eventId}/registrations`)
+    
+    if (eventSlug) {
+      revalidatePath(`/events/${eventSlug}`)
+      revalidatePath(`/events/${eventSlug}/register`)
+    }
+
     return { success: true }
   } catch (err: unknown) {
     console.error('Stripe refund error:', err)
@@ -81,7 +91,7 @@ export async function refundTeam(eventId: string, teamId: string) {
   }
 }
 
-export async function updateTeam(eventId: string, teamId: string, formData: FormData) {
+export async function updateTeam(eventId: string, teamId: string, formData: FormData, eventSlug?: string) {
   const supabase = await createClient()
 
   const team_name = formData.get('team_name') as string
@@ -117,13 +127,17 @@ export async function updateTeam(eventId: string, teamId: string, formData: Form
   }
 
   revalidatePath(`/admin/events/${eventId}/registrations`)
+  
+  if (eventSlug) {
+    revalidatePath(`/events/${eventSlug}`)
+  }
 }
 
-export async function withdrawTeam(eventId: string, teamId: string) {
-  return updateTeamStatus(eventId, teamId, 'withdrawn')
+export async function withdrawTeam(eventId: string, teamId: string, eventSlug?: string) {
+  return updateTeamStatus(eventId, teamId, 'withdrawn', eventSlug)
 }
 
-export async function toggleCheckIn(eventId: string, teamId: string, isCheckedIn: boolean) {
+export async function toggleCheckIn(eventId: string, teamId: string, isCheckedIn: boolean, eventSlug?: string) {
   const supabase = await createClient()
 
   if (isCheckedIn) {
@@ -146,9 +160,14 @@ export async function toggleCheckIn(eventId: string, teamId: string, isCheckedIn
 
   revalidatePath(`/admin/events/${eventId}/check-in`)
   revalidatePath(`/admin/events/${eventId}/registrations`)
+  
+  if (eventSlug) {
+    revalidatePath(`/events/${eventSlug}`)
+    revalidatePath(`/events/${eventSlug}/register`)
+  }
 }
 
-export async function saveSeeding(eventId: string, divisionId: string, teamSeeds: { teamId: string, seed: number }[]) {
+export async function saveSeeding(eventId: string, divisionId: string, teamSeeds: { teamId: string, seed: number }[], eventSlug?: string) {
   const supabase = await createClient()
 
   // We perform individual updates since Supabase doesn't support bulk updates easily with different values per row
@@ -167,4 +186,9 @@ export async function saveSeeding(eventId: string, divisionId: string, teamSeeds
   }
 
   revalidatePath(`/admin/events/${eventId}/seeding`)
+  revalidatePath(`/admin/events/${eventId}/pools`)
+  
+  if (eventSlug) {
+    revalidatePath(`/events/${eventSlug}/standings`)
+  }
 }

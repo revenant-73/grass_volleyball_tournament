@@ -6,11 +6,12 @@ import { toggleCheckIn } from '@/app/admin/events/[id]/registrations/actions'
 
 interface CheckInInterfaceProps {
   eventId: string
+  eventSlug: string
   initialTeams: (Team & { check_ins: { id: string; team_id: string; event_id: string }[] })[]
   divisions: Division[]
 }
 
-export default function CheckInInterface({ eventId, initialTeams, divisions }: CheckInInterfaceProps) {
+export default function CheckInInterface({ eventId, eventSlug, initialTeams, divisions }: CheckInInterfaceProps) {
   const [search, setSearch] = useState('')
   const [divisionFilter, setDivisionFilter] = useState('all')
 
@@ -27,7 +28,7 @@ export default function CheckInInterface({ eventId, initialTeams, divisions }: C
 
   const handleToggleCheckIn = async (teamId: string, isCheckedIn: boolean) => {
     try {
-      await toggleCheckIn(eventId, teamId, !isCheckedIn)
+      await toggleCheckIn(eventId, teamId, !isCheckedIn, eventSlug)
     } catch (err) {
       console.error('Check-in error:', err)
       alert('Failed to update check-in status')

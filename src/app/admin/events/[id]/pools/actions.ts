@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { PoolAssignment } from '@/types'
 
-export async function createPools(eventId: string, divisionId: string, poolData: { name: string, teamIds: string[], court: string }[]) {
+export async function createPools(eventId: string, divisionId: string, poolData: { name: string, teamIds: string[], court: string, format_type?: string }[]) {
   const supabase = await createClient()
 
   // 1. Delete existing pools for this division (cascade deletes assignments)
@@ -17,11 +17,11 @@ export async function createPools(eventId: string, divisionId: string, poolData:
 
   // 2. Create new pools and assignments
   for (let i = 0; i < poolData.length; i++) {
-    const { name, teamIds, court } = poolData[i]
+    const { name, teamIds, court, format_type } = poolData[i]
     
     const { data: pool, error: poolError } = await supabase
       .from('pools')
-      .insert([{ division_id: divisionId, name, display_order: i, court }])
+      .insert([{ division_id: divisionId, name, display_order: i, court, format_type }])
       .select()
       .single()
 
@@ -130,7 +130,8 @@ export async function updateMatchScore(
   matchId: string, 
   s1_1: number, s1_2: number, 
   s2_1: number, s2_2: number, 
-  s3_1: number, s3_2: number
+  s3_1: number, s3_2: number,
+  eventSlug?: string
 ) {
   const supabase = await createClient()
 
@@ -167,4 +168,10 @@ export async function updateMatchScore(
 
   revalidatePath(`/admin/events/${eventId}/scores`)
   revalidatePath(`/admin/events/${eventId}/pools`)
+  
+  if (eventSlug) {
+    revalidatePath(`/events/${eventSlug}`)
+    revalidatePath(`/events/${eventSlug}/standings`)
+    revalidatePath(`/events/${eventSlug}/schedule`)
+  }
 }

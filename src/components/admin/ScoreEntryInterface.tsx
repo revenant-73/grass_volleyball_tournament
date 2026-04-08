@@ -7,13 +7,14 @@ import { updateMatchScore } from '@/app/admin/events/[id]/pools/actions'
 
 interface ScoreEntryInterfaceProps {
   eventId: string
+  eventSlug: string
   initialMatches: Match[]
   divisions: Division[]
   teams: Team[]
   pools: Pool[]
 }
 
-export default function ScoreEntryInterface({ eventId, initialMatches, divisions, teams, pools }: ScoreEntryInterfaceProps) {
+export default function ScoreEntryInterface({ eventId, eventSlug, initialMatches, divisions, teams, pools }: ScoreEntryInterfaceProps) {
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [activePoolId, setActivePoolId] = useState('')
   const [scores, setScores] = useState<Record<string, { 
@@ -63,7 +64,8 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
 
   const poolMatches = initialMatches.filter(m => m.pool_id === activePoolId)
   const poolTeams = teams.filter(t => t.division_id === divisionId && initialMatches.some(m => m.pool_id === activePoolId && (m.team_1_id === t.id || m.team_2_id === t.id)))
-  const standings = calculateStandings(poolTeams, poolMatches)
+  const activePool = pools.find(p => p.id === activePoolId)
+  const standings = calculateStandings(poolTeams, poolMatches, activePool?.format_type)
 
   const handleScoreChange = (matchId: string, set: 1 | 2 | 3, team: 1 | 2, val: string) => {
     const num = parseInt(val) || 0
@@ -105,7 +107,8 @@ export default function ScoreEntryInterface({ eventId, initialMatches, divisions
         matchId, 
         data.s1_1, data.s1_2,
         data.s2_1, data.s2_2,
-        data.s3_1, data.s3_2
+        data.s3_1, data.s3_2,
+        eventSlug
       )
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'An error occurred'

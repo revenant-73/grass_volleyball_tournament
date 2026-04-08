@@ -6,11 +6,12 @@ import { saveSeeding } from '@/app/admin/events/[id]/registrations/actions'
 
 interface SeedingInterfaceProps {
   eventId: string
+  eventSlug: string
   initialTeams: Team[]
   divisions: Division[]
 }
 
-export default function SeedingInterface({ eventId, initialTeams, divisions }: SeedingInterfaceProps) {
+export default function SeedingInterface({ eventId, eventSlug, initialTeams, divisions }: SeedingInterfaceProps) {
   const [divisionId, setDivisionId] = useState(divisions[0]?.id || '')
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(false)
@@ -48,7 +49,7 @@ export default function SeedingInterface({ eventId, initialTeams, divisions }: S
     }))
 
     try {
-      await saveSeeding(eventId, divisionId, teamSeeds)
+      await saveSeeding(eventId, divisionId, teamSeeds, eventSlug)
       setHasChanges(false)
       alert('Seeding saved successfully')
     } catch (err: unknown) {

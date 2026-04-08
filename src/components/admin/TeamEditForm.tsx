@@ -6,11 +6,12 @@ import { updateTeam } from '@/app/admin/events/[id]/registrations/actions'
 
 interface TeamEditFormProps {
   eventId: string
+  eventSlug: string
   team: Team
   onClose: () => void
 }
 
-export default function TeamEditForm({ eventId, team, onClose }: TeamEditFormProps) {
+export default function TeamEditForm({ eventId, eventSlug, team, onClose }: TeamEditFormProps) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -43,7 +44,7 @@ export default function TeamEditForm({ eventId, team, onClose }: TeamEditFormPro
     })
 
     try {
-      await updateTeam(eventId, team.id, submissionData)
+      await updateTeam(eventId, team.id, submissionData, eventSlug)
       onClose()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong'

@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function createAnnouncement(eventId: string, formData: FormData) {
+export async function createAnnouncement(eventId: string, formData: FormData, eventSlug?: string) {
   const supabase = await createClient()
 
   const title = formData.get('title') as string
@@ -26,9 +26,10 @@ export async function createAnnouncement(eventId: string, formData: FormData) {
   }
 
   revalidatePath(`/admin/events/${eventId}/announcements`)
+  if (eventSlug) revalidatePath(`/events/${eventSlug}`)
 }
 
-export async function updateAnnouncement(eventId: string, announcementId: string, formData: FormData) {
+export async function updateAnnouncement(eventId: string, announcementId: string, formData: FormData, eventSlug?: string) {
   const supabase = await createClient()
 
   const title = formData.get('title') as string
@@ -50,9 +51,10 @@ export async function updateAnnouncement(eventId: string, announcementId: string
   }
 
   revalidatePath(`/admin/events/${eventId}/announcements`)
+  if (eventSlug) revalidatePath(`/events/${eventSlug}`)
 }
 
-export async function deleteAnnouncement(eventId: string, announcementId: string) {
+export async function deleteAnnouncement(eventId: string, announcementId: string, eventSlug?: string) {
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -65,4 +67,5 @@ export async function deleteAnnouncement(eventId: string, announcementId: string
   }
 
   revalidatePath(`/admin/events/${eventId}/announcements`)
+  if (eventSlug) revalidatePath(`/events/${eventSlug}`)
 }

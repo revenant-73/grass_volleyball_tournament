@@ -84,6 +84,7 @@ export interface Pool {
   name: string
   display_order: number
   court: string | null
+  format_type: string | null
   created_at: string
   assignments?: PoolAssignment[]
 }

@@ -143,20 +143,25 @@ export default function BracketManager({ eventId, initialMatches, divisions, all
         </div>
 
         {divisionMatches.length > 0 && (
-          <div className={`flex items-center gap-4 px-6 py-3 rounded-2xl border-2 transition-all ${
-            isPublished ? 'border-green-500 bg-green-50 dark:bg-green-900/10' : 'border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900'
+          <div className={`flex items-center gap-4 px-6 py-3 rounded-[1.5rem] border-2 transition-all shadow-sm ${
+            isPublished ? 'border-green-500 bg-green-50 dark:bg-green-900/10' : 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900'
           }`}>
-             <span className={`text-[10px] font-black uppercase tracking-widest ${isPublished ? 'text-green-600' : 'text-zinc-400'}`}>
-                Bracket {isPublished ? 'Live' : 'Hidden'}
-             </span>
+             <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full animate-pulse ${isPublished ? 'bg-green-500' : 'bg-zinc-400'}`} />
+                <span className={`text-[10px] font-black uppercase tracking-[0.1em] ${isPublished ? 'text-green-600' : 'text-zinc-500'}`}>
+                   Public Visibility: {isPublished ? 'LIVE' : 'HIDDEN'}
+                </span>
+             </div>
              <button 
                onClick={handleTogglePublish}
                disabled={loading}
-               className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                 isPublished ? 'bg-zinc-200 text-zinc-600' : 'bg-black text-white dark:bg-white dark:text-black'
+               className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                 isPublished 
+                  ? 'bg-zinc-200 text-zinc-600 hover:bg-black hover:text-white' 
+                  : 'bg-black text-white dark:bg-white dark:text-black hover:scale-105 active:scale-95'
                }`}
              >
-                {isPublished ? 'Unpublish' : 'Publish to Public'}
+                {isPublished ? 'Hide Bracket' : 'Publish Bracket'}
              </button>
           </div>
         )}

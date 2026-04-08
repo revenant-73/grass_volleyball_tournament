@@ -6,10 +6,11 @@ import AnnouncementForm from './AnnouncementForm'
 
 interface AnnouncementListProps {
   eventId: string
+  eventSlug: string
   initialAnnouncements: Announcement[]
 }
 
-export default function AnnouncementList({ eventId, initialAnnouncements }: AnnouncementListProps) {
+export default function AnnouncementList({ eventId, eventSlug, initialAnnouncements }: AnnouncementListProps) {
   const [announcements] = useState<Announcement[]>(initialAnnouncements)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
@@ -40,6 +41,7 @@ export default function AnnouncementList({ eventId, initialAnnouncements }: Anno
       {isAdding && (
         <AnnouncementForm 
           eventId={eventId} 
+          eventSlug={eventSlug}
           onCancel={() => setIsAdding(false)} 
           onSuccess={handleSuccess}
         />
@@ -52,6 +54,7 @@ export default function AnnouncementList({ eventId, initialAnnouncements }: Anno
               {editingId === announcement.id ? (
                 <AnnouncementForm 
                   eventId={eventId}
+                  eventSlug={eventSlug}
                   announcementId={announcement.id}
                   initialData={announcement}
                   onCancel={() => setEditingId(null)}

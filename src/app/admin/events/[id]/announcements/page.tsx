@@ -13,7 +13,7 @@ export default async function AdminAnnouncementsPage({
 
   const { data: event, error: eventError } = await supabase
     .from('events')
-    .select('name')
+    .select('name, slug')
     .eq('id', id)
     .single()
 
@@ -55,6 +55,7 @@ export default async function AdminAnnouncementsPage({
 
         <AnnouncementList 
           eventId={id} 
+          eventSlug={event.slug}
           initialAnnouncements={announcements || []} 
         />
       </div>

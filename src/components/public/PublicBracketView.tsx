@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Division, Team, Match } from '@/types'
+import { createClient } from '@/lib/supabase/client'
 
 interface PublicBracketViewProps {
   divisions: Division[]
@@ -10,17 +11,67 @@ interface PublicBracketViewProps {
 }
 
 export default function PublicBracketView({
-  divisions,
+  divisions: initialDivisions,
   teams,
-  bracketMatches,
+  bracketMatches: initialMatches,
 }: PublicBracketViewProps) {
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>(
-    divisions[0]?.id || ''
+    initialDivisions[0]?.id || ''
   )
+  const [matches, setMatches] = useState<Match[]>(initialMatches)
+  const [divisions, setDivisions] = useState<Division[]>(initialDivisions)
+
+  useEffect(() => {
+    if (!selectedDivisionId) return
+    const supabase = createClient()
+    
+    const matchesChannel = supabase
+      .channel(`public-bracket-matches-${selectedDivisionId}`)
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'matches', 
+          filter: `division_id=eq.${selectedDivisionId}` 
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setMatches(prev => [...prev, payload.new as Match])
+          } else if (payload.eventType === 'UPDATE') {
+            setMatches(prev => prev.map(m => m.id === (payload.new as Match).id ? (payload.new as Match) : m))
+          } else if (payload.eventType === 'DELETE') {
+            setMatches(prev => prev.filter(m => m.id !== (payload.old as { id: string }).id))
+          }
+        }
+      )
+      .subscribe()
+
+    const divisionsChannel = supabase
+      .channel(`public-bracket-divisions-${selectedDivisionId}`)
+      .on(
+        'postgres_changes',
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'divisions',
+          filter: `id=eq.${selectedDivisionId}`
+        },
+        (payload) => {
+          setDivisions(prev => prev.map(d => d.id === (payload.new as Division).id ? (payload.new as Division) : d))
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(matchesChannel)
+      supabase.removeChannel(divisionsChannel)
+    }
+  }, [selectedDivisionId])
 
   const selectedDivision = divisions.find((d) => d.id === selectedDivisionId)
   const isPublished = selectedDivision?.bracket_published || false
-  const divisionMatches = bracketMatches.filter(
+  const divisionMatches = matches.filter(
     (m) => m.division_id === selectedDivisionId
   )
   

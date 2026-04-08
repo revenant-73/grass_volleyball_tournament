@@ -12,7 +12,7 @@ export interface TeamStanding {
   winPercentage: number
 }
 
-export function calculateStandings(teams: Team[], matches: Match[]): TeamStanding[] {
+export function calculateStandings(teams: Team[], matches: Match[], formatType?: string | null): TeamStanding[] {
   const standingsMap: Record<string, TeamStanding> = {}
 
   // Initialize standings for all teams
@@ -74,6 +74,10 @@ export function calculateStandings(teams: Team[], matches: Match[]): TeamStandin
 
   // Sort by Wins -> Set Diff -> Point Diff -> Points For
   return standings.sort((a, b) => {
+    if (formatType === 'straight_3') {
+      if (b.setsWon !== a.setsWon) return b.setsWon - a.setsWon
+    }
+    
     if (b.wins !== a.wins) return b.wins - a.wins
     
     const aSetDiff = a.setsWon - a.setsLost
@@ -86,17 +90,21 @@ export function calculateStandings(teams: Team[], matches: Match[]): TeamStandin
 }
 
 export function rankTeamsAcrossPools(allStandings: TeamStanding[]): Team[] {
-  // Simple ranking: take top teams from each pool, then second teams, etc.
-  // Or just sort everyone by wins/diff if pools are balanced.
-  // For now, let's just sort the combined list.
+  // To fairly rank across different pool sizes:
+  // 1. Calculate set win percentage and match win percentage
   return [...allStandings]
     .sort((a, b) => {
-      if (b.wins !== a.wins) return b.wins - a.wins
+      // Primary: Match Win Percentage
+      if (b.winPercentage !== a.winPercentage) return b.winPercentage - a.winPercentage
       
-      const aSetDiff = a.setsWon - a.setsLost
-      const bSetDiff = b.setsWon - b.setsLost
-      if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff
+      // Secondary: Set Win Percentage
+      const aSetTotal = a.setsWon + a.setsLost
+      const bSetTotal = b.setsWon + b.setsLost
+      const aSetPct = aSetTotal > 0 ? a.setsWon / aSetTotal : 0
+      const bSetPct = bSetTotal > 0 ? b.setsWon / bSetTotal : 0
+      if (bSetPct !== aSetPct) return bSetPct - aSetPct
       
+      // Tertiary: Point Diff (could also use percentage/average if needed)
       if (b.pointDiff !== a.pointDiff) return b.pointDiff - a.pointDiff
       return b.pointsFor - a.pointsFor
     })

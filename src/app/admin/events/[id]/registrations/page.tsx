@@ -69,6 +69,7 @@ export default async function RegistrationsPage({
 
         <TeamManagement 
           eventId={id} 
+          eventSlug={event.slug}
           initialTeams={(teams as unknown) as Team[]} 
           divisions={(divisions as unknown) as Division[]} 
         />
